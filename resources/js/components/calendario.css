@@ -1,0 +1,21 @@
+.fc-timegrid-event-harness.fc-timegrid-event-harness-inset{
+    cursor: pointer;
+}
+
+.fc .fc-button-primary {
+    background-color: #4c4ad7;
+    border-color: #4c4ad7;
+    color: white;
+}
+
+.fc .fc-button-primary:hover {
+    background-color: #2D2C84;
+    border-color: #2D2C84;
+    color: white;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active, .fc .fc-button-primary:not(:disabled):active {
+    background-color: #2D2C84;
+    border-color: #2D2C84;
+    color: white;
+}
