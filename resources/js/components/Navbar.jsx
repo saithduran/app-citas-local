@@ -31,6 +31,9 @@ function Navbar({ user }) {
                 </button>
                 <div className={`navbar-menu ${isOpen ? 'active' : ''}`}>
                     <Link to="/dashboard" className="navbar-item">Dashboard</Link>
+                    <Link to="/agendarcita" className="navbar-item">Agendar Cita</Link>
+                    <Link to="/registrousuarios" className="navbar-item">Registro de Usuarios</Link>
+                    <Link to="/listadousuarios" className="navbar-item">Listado de Usuarios</Link>
                     {user && <span className="navbar-user">{user.username}</span>}
                     <button className="navbar-item logout" onClick={handleLogout}>Cerrar Sesión</button>
                 </div>

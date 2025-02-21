@@ -7,6 +7,7 @@ import ConsultarCita from './pages/ConsultarCita';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import DetalleCita from './pages/DetalleCita';
+import RegistroUsuarios from './pages/RegistroUsuarios';
 import '../css/app.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -19,12 +20,13 @@ function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<Inicio />} />
-                <Route path="/agendarcita" element={<AgendarCita />} />
-                <Route path="/consultarcita" element={<ConsultarCita />} />
+                <Route path="/" element={<Login />} />
+                <Route path="/agendarcita" element={<PrivateRoute><AgendarCita /></PrivateRoute>} />
+                <Route path="/consultarcita" element={<PrivateRoute><ConsultarCita /></PrivateRoute>} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-                <Route path="/cita/:codigo" element={<DetalleCita />} />
+                <Route path="/registrousuarios" element={<PrivateRoute><RegistroUsuarios /></PrivateRoute>} />
+                <Route path="/cita/:codigo" element={<PrivateRoute><DetalleCita /></PrivateRoute>} />
             </Routes>
         </Router>
     );

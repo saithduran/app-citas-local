@@ -220,7 +220,7 @@ function AgendarCita() {
                         <button type="submit" className="agendar_buttons confirm" disabled={enviando}>
                             {enviando ? "Agendando..." : "Confirmar Cita"}
                         </button>
-                        <Link to="/">
+                        <Link to="/dashboard">
                             <button className="agendar_buttons back">Volver al Inicio</button>
                         </Link>
                     </div>
