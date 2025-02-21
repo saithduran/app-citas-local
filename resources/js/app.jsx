@@ -1,13 +1,14 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Inicio from './pages/Inicio';
+// import Inicio from './pages/Inicio';
 import AgendarCita from './pages/AgendarCita';
 import ConsultarCita from './pages/ConsultarCita';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import DetalleCita from './pages/DetalleCita';
 import RegistroUsuarios from './pages/RegistroUsuarios';
+import ListadoUsuarios from './pages/ListadoUsuarios';
 import '../css/app.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -25,8 +26,9 @@ function App() {
                 <Route path="/consultarcita" element={<PrivateRoute><ConsultarCita /></PrivateRoute>} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-                <Route path="/registrousuarios" element={<PrivateRoute><RegistroUsuarios /></PrivateRoute>} />
                 <Route path="/cita/:codigo" element={<PrivateRoute><DetalleCita /></PrivateRoute>} />
+                <Route path="/registrousuarios" element={<PrivateRoute><RegistroUsuarios /></PrivateRoute>} />
+                <Route path="/listadousuarios" element={<PrivateRoute><ListadoUsuarios /></PrivateRoute>} />
             </Routes>
         </Router>
     );

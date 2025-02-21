@@ -21,7 +21,12 @@ Route::get('/cita/{codigo}', [CitaController::class, 'show']);
 Route::put('/cita/{codigo}', [CitaController::class, 'update']);
 Route::delete('/cita/{codigo}', [CitaController::class, 'destroy']);
 Route::get('/citas', [CitaController::class, 'index'])->middleware('auth:sanctum');
+//Usuarios
+Route::post('/registrarusuarios', [UsuarioController::class, 'store'])->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->get('/usuarios', [UsuarioController::class, 'index']);
+Route::put('/usuarios/{id}', [UsuarioController::class, 'update'])->middleware('auth:sanctum');
+Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy'])->middleware('auth:sanctum');
+
 //Rutas para agendamieto de citas
-Route::post('/registrousuarios', [UsuarioController::class, 'store'])->middleware('auth:sanctum');
 Route::post('/agendarcitas', [CitaController::class, 'store']);
 Route::get('/horarios-disponibles/{fecha}', [CitaController::class, 'getHorariosDisponibles']);
