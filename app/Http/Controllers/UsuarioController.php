@@ -25,11 +25,14 @@ class UsuarioController extends Controller
     }
 
     public function index(){
-        return response()->json(Usuario::all());
+        $usuarios = Usuarios::all();
+    
+        return response()->json($usuarios);
     }
+    
 
     public function destroy($id){
-        $usuario = Usuario::find($id);
+        $usuario = Usuarios::find($id);
         if (!$usuario) {
             return response()->json(['error' => 'Usuario no encontrado'], 404);
         }

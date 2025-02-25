@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import Navbar from '../components/navbar';
 import 'react-datepicker/dist/react-datepicker.css'; // Estilos del calendario
 import { Link,useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Importa Axios
-import '../../css/agendarcita.css'; // Importa el archivo CSS
+import '../../css/registrousuarios.css'; // Importa el archivo CSS
 
 const RegistroUsuarios = () => {
     const navigate = useNavigate();
+    //Variable para traer nombre del usuario que logea
+    const [user, setUser] = useState(null);
     // Estado para el nombre y el número de celular
     const [nombre, setNombre] = useState('');
     const [celular, setCelular] = useState('');
@@ -23,6 +26,27 @@ const RegistroUsuarios = () => {
       const regex = /^\d{10}$/; // Asegura que sean exactamente 10 dígitos
       return regex.test(numero);
     };
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/api/user', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                setUser(response.data);
+            } catch (error) {
+                console.error('Error al obtener el usuario', error);
+                if (error.response && error.response.status === 401) {
+                    localStorage.removeItem('token');
+                    navigate('/login');
+                }
+            }
+        };
+
+        fetchUser();
+    }, []);
 
     // Función para manejar el envío del formulario
     const handleSubmit = async (e) => {
@@ -75,70 +99,73 @@ const RegistroUsuarios = () => {
   };
 
   return (
-    <div className="agendar-container">
-      <div className="agendar-card">
-        <h2>Registro de Usuarios</h2>
-        {mensajeExito && <div className="alerta-exito">{mensajeExito}</div>} 
-        {error && <p className="error-message">{error}</p>}
-        {errorCelular && <p className="error-message">{errorCelular}</p>}
-        <form onSubmit={handleSubmit}>
-          {/* Nombre */}
-          <div className="form-group">
-              <label>Nombre:</label>
-              <input
-                  type="text"
-                  value={nombre}
-                  onChange={(e) => setNombre(e.target.value)}
-                  placeholder="Ingresa tu nombre"
-                  required
-                  className="input-field"
-              />
-          </div>
-          {/* Celular */}
-          <div className="form-group">
-            <label>Número de celular:</label>
-            <input
-                type="tel"
-                value={celular}
-                onChange={(e) => {
-                    const input = e.target.value;
-                    if (/^\d{0,10}$/.test(input)) {
-                        setCelular(input);
-                        setErrorCelular('');
-                    } else {
-                        setErrorCelular('Solo se permiten números y un máximo de 10 dígitos.');
-                    }
-                }}
-                placeholder="Ingresa tu número de celular"
-                maxLength={10}
-                required
-                className="input-field"
-            />
-            {errorCelular && <p className="error-message">{errorCelular}</p>}
+    <div>
+        <Navbar user={user} />
+        <div className="agendar-container">
+            <div className="agendar-card">
+                <h2>Registro de Usuarios</h2>
+                {mensajeExito && <div className="alerta-exito">{mensajeExito}</div>} 
+                {error && <p className="error-message">{error}</p>}
+                {errorCelular && <p className="error-message">{errorCelular}</p>}
+                <form onSubmit={handleSubmit}>
+                {/* Nombre */}
+                <div className="form-group">
+                    <label>Nombre:</label>
+                    <input
+                        type="text"
+                        value={nombre}
+                        onChange={(e) => setNombre(e.target.value)}
+                        placeholder="Ingresa tu nombre"
+                        required
+                        className="input-field"
+                    />
+                </div>
+                {/* Celular */}
+                <div className="form-group">
+                    <label>Número de celular:</label>
+                    <input
+                        type="tel"
+                        value={celular}
+                        onChange={(e) => {
+                            const input = e.target.value;
+                            if (/^\d{0,10}$/.test(input)) {
+                                setCelular(input);
+                                setErrorCelular('');
+                            } else {
+                                setErrorCelular('Solo se permiten números y un máximo de 10 dígitos.');
+                            }
+                        }}
+                        placeholder="Ingresa tu número de celular"
+                        maxLength={10}
+                        required
+                        className="input-field"
+                    />
+                    {errorCelular && <p className="error-message">{errorCelular}</p>}
+                </div>
+                {/* Dirección */}
+                <div className="form-group">
+                    <label>Dirección:</label>
+                    <input
+                        type="text"
+                        value={direccion}
+                        onChange={(e) => setDireccion(e.target.value)}
+                        placeholder="Ingresa la Dirección"
+                        required
+                        className="input-field"
+                    />
+                </div>
+                {/* Botones */}
+                <div className="button-group">
+                    <button type="submit" className="agendar_buttons confirm" disabled={enviando}>
+                        {enviando ? "Agendando..." : "Confirmar Cita"}
+                    </button>
+                    <Link to="/dashboard">
+                        <button className="agendar_buttons back">Volver al Inicio</button>
+                    </Link>
+                </div>
+                </form>
+            </div>
         </div>
-          {/* Dirección */}
-          <div className="form-group">
-              <label>Dirección:</label>
-              <input
-                  type="text"
-                  value={direccion}
-                  onChange={(e) => setDireccion(e.target.value)}
-                  placeholder="Ingresa la Dirección"
-                  required
-                  className="input-field"
-              />
-          </div>
-          {/* Botones */}
-          <div className="button-group">
-              <button type="submit" className="agendar_buttons confirm" disabled={enviando}>
-                  {enviando ? "Agendando..." : "Confirmar Cita"}
-              </button>
-              <Link to="/dashboard">
-                  <button className="agendar_buttons back">Volver al Inicio</button>
-              </Link>
-          </div>
-        </form>
-      </div>
     </div>
   );
 };

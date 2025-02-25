@@ -9,7 +9,7 @@ import Dashboard from './pages/Dashboard';
 import DetalleCita from './pages/DetalleCita';
 import RegistroUsuarios from './pages/RegistroUsuarios';
 import ListadoUsuarios from './pages/ListadoUsuarios';
-import '../css/app.css';
+// import '../css/app.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const PrivateRoute = ({ children }) => {

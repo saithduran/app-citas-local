@@ -8,12 +8,12 @@ use Illuminate\Support\Str;
 class Cita extends Model
 {
     protected $fillable = [
-        'codigo', // Agregamos el nuevo campo
-        'fecha',
-        'hora',
-        'nombre',
-        'celular'
+        'usuario_id', 'fecha', 'hora'
     ];
+
+    public function usuario() {
+        return $this->belongsTo(Usuarios::class, 'usuario_id');
+    }
 
     /**
      * Generar un código único para la cita

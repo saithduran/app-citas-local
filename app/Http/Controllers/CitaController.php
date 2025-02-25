@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Cita;
+use App\Models\Usuarios;
 
 class CitaController extends Controller
 {
@@ -14,19 +15,40 @@ class CitaController extends Controller
             'hora' => 'required',
             'nombre' => 'required|string|max:255',
             'celular' => 'required|string|max:10',
+            'usuario_id' => 'required|exists:usuarios,id', // Validamos que el usuario exista
         ]);
     
         $cita = Cita::create([
             'fecha' => $request->fecha,
             'hora' => $request->hora,
             'nombre' => $request->nombre,
-            'celular' => $request->celular
+            'celular' => $request->celular,
+            'usuario_id' => $request->usuario_id, // Asignamos el usuario
+            'codigo' => uniqid(), // Generamos un código único
         ]);
-
+    
         return response()->json([
-            'message' => 'Cita agendada y confirmación enviada por WhatsApp',
-            'codigo' => $cita->codigo, // Enviamos el código de la cita
+            'message' => 'Cita agendada con éxito',
+            'codigo' => $cita->codigo,
         ], 201);
+    }
+
+    // Obtener todas las citas para mostrarlas en el calendario
+    public function index()
+    {
+        $citas = Cita::with('usuario')->get(); // Cargamos el usuario asociado a cada cita
+    
+        $eventos = $citas->map(function ($cita) {
+            return [
+                'title' => 'Cita con ' . $cita->nombre,
+                'start' => $cita->fecha,
+                'hora' => $cita->hora,
+                'codigo' => $cita->codigo,
+                'usuario' => $cita->usuario ? $cita->usuario->nombre : 'Desconocido',
+            ];
+        });
+    
+        return response()->json($eventos);
     }
 
     // Obtener los horarios disponibles para una fecha
@@ -58,26 +80,8 @@ class CitaController extends Controller
         return response()->json($cita);
     }
 
-    // Obtener todas las citas para mostrarlas en el calendario
-    public function index()
-    {
-        $citas = Cita::all();
-
-        $eventos = $citas->map(function ($cita) {
-            return [
-                'title' => 'Cita con ' . $cita->nombre,
-                'start' => $cita->fecha, // Formato YYYY-MM-DD
-                'hora' => $cita->hora,
-                'codigo' => $cita->codigo,
-            ];
-        });
-
-        return response()->json($eventos);
-    }
-
-    public function show($codigo)
-    {
-        $cita = Cita::where('codigo', $codigo)->first();
+    public function show($codigo){
+        $cita = Cita::with('usuario')->where('codigo', $codigo)->first();
     
         if (!$cita) {
             return response()->json(['mensaje' => 'Cita no encontrada'], 404);
