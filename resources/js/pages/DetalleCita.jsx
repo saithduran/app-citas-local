@@ -15,6 +15,7 @@ function DetalleCita() {
     const [selectedTime, setSelectedTime] = useState('');
     const [nombre, setNombre] = useState('');
     const [celular, setCelular] = useState('');
+    const [tutor, setTutor] = useState('');
     const [horariosDisponibles, setHorariosDisponibles] = useState([]);
     const [mensajeExito, setMensajeExito] = useState("");
     const [error, setError] = useState('');
@@ -42,10 +43,16 @@ function DetalleCita() {
     useEffect(() => {
         const fetchCita = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/api/cita/${codigo}`);
+                const response = await axios.get(`http://localhost:8000/api/cita/${codigo}`,{
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                console.log(response)
                 setCita(response.data);
-                setNombre(response.data.nombre);
-                setCelular(response.data.celular);
+                setNombre(response.data.usuario.nombre);
+                setTutor(response.data.usuario.nombre_completo);
+                setCelular(response.data.usuario.celular);
                 setSelectedDate(response.data.fecha ? new Date(response.data.fecha + "T00:00:00") : new Date());
                 setSelectedTime(convertirHora24a12(response.data.hora));
             } catch (error) {
@@ -74,28 +81,24 @@ function DetalleCita() {
     }, [selectedDate]);    
 
     const handleEdit = async () => {
-        if (!nombre || !celular || !selectedTime) {
+        if (!selectedTime || !selectedDate) {
             setError('Por favor, completa todos los campos.');
-            return;
-        }
-        if (!/^\d{10}$/.test(celular)) {
-            setErrorCelular('Por favor, ingresa un número de celular válido (10 dígitos).');
             return;
         }
         try {
             await axios.put(`http://localhost:8000/api/cita/${codigo}`, {
-                nombre,
+                // nombre,
+                // celular,
                 fecha: selectedDate.toISOString().split('T')[0],
                 hora: convertirHora12a24(selectedTime),
-                celular
             });
     
             setCita({
                 ...cita,
-                nombre,
+                // nombre,
+                // celular,
                 fecha: selectedDate.toISOString().split('T')[0],
                 hora: convertirHora12a24(selectedTime),
-                celular
             });
     
             setMensajeExito('✅ Cita actualizada con éxito.');
@@ -132,7 +135,9 @@ function DetalleCita() {
                 {editando ? (
                     <div>
                         <label className='mt-3'>Nombre:</label>
-                        <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} />
+                        <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} disabled/>
+                        <label className='mt-3'>Celular:</label>
+                        <input type="tel" value={celular} onChange={(e) => setCelular(e.target.value)} className="input-field" maxLength={10} disabled/>
                         <label className='mt-3'>Fecha:</label>
                         <DatePicker selected={selectedDate} onChange={setSelectedDate} dateFormat="dd/MM/yyyy" minDate={new Date()} locale={es} className="input-field"/>
                         <label className='mt-3'>Hora:</label>
@@ -142,17 +147,16 @@ function DetalleCita() {
                                 <option key={index} value={horario}>{horario}</option>
                             ))}
                         </select>
-                        <label className='mt-3'>Celular:</label>
-                        <input type="tel" value={celular} onChange={(e) => setCelular(e.target.value)} className="input-field" maxLength={10}/>
                         <button onClick={handleEdit} className="detalle_buttons editar m-2">Guardar</button>
                         <button onClick={() => setEditando(false)} className="detalle_buttons cancelar mt-3">Volver</button>
                     </div>
                 ) : (
                     <div>
-                        <p><strong>Nombre:</strong> {cita?.nombre}</p>
+                        <p><strong>Nombre:</strong> {cita?.usuario.nombre}</p>
                         <p><strong>Fecha:</strong> {cita?.fecha}</p>
+                        <p><strong>Encargado:</strong> {cita?.tutores.nombre_completo}</p>
                         <p><strong>Hora:</strong> {cita?.hora ? convertirHora24a12(cita.hora) : ''}</p>
-                        <p><strong>Celular:</strong> {cita?.celular}</p>
+                        <p><strong>Celular:</strong> {cita?.usuario.celular}</p>
                         <button onClick={() => setEditando(true)} className="detalle_buttons editar">Editar</button>
                         <button onClick={handleDelete} className="detalle_buttons cancelar">Cancelar Cita</button>
                         <Link to="/dashboard">

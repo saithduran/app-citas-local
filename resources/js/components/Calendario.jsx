@@ -19,7 +19,7 @@ function Calendario() {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
                 });
-
+                console.log(response)
                 const citas = response.data.map(cita => {
                     const fecha = cita.start || '';
                     let hora = cita.hora || '';
@@ -29,7 +29,7 @@ function Calendario() {
                     }
 
                     return {
-                        title: cita.title,
+                        title: cita.title+cita.usuario,
                         start: `${fecha}T${hora}`,
                         extendedProps: {
                             codigo: cita.codigo, // 📌 Pasamos el código de la cita

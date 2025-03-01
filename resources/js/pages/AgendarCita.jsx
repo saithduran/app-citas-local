@@ -5,6 +5,7 @@ import 'react-datepicker/dist/react-datepicker.css'; // Estilos del calendario
 import { Link,useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Importa Axios
 import '../../css/agendarcita.css'; // Importa el archivo CSS
+import Select from 'react-select'; // Para autocompletado de nombres
 
 function AgendarCita() {
     const navigate = useNavigate();
@@ -15,6 +16,12 @@ function AgendarCita() {
     // Estado para el nombre y el número de celular
     const [nombre, setNombre] = useState('');
     const [celular, setCelular] = useState('');
+    const [idUsuario, setIdUsuario] = useState('');
+    const [usuarios, setUsuarios] = useState([]);
+    // Estado para el nombre y el número de celular
+    const [nombreTutor, setNombreTutor] = useState('');
+    const [idTutor, setIdTutor] = useState('');
+    const [tutores, setTutores] = useState([]);
     // Estado para los horarios disponibles
     const [horariosDisponibles, setHorariosDisponibles] = useState([]);
     // Estado para mostrar el mensaje
@@ -56,7 +63,7 @@ function AgendarCita() {
     const obtenerHorariosDisponibles = async (fecha) => {
         try {
             const response = await axios.get(`http://localhost:8000/api/horarios-disponibles/${fecha}`);
-            console.log('Respuesta del backend:', response.data); // Verifica la respuesta
+            //console.log('Respuesta del backend:', response.data); // Verifica la respuesta
     
             if (Array.isArray(response.data)) {
                 if (response.data.length > 0) {
@@ -74,6 +81,52 @@ function AgendarCita() {
         }
     };
     
+    // Obtener lista de usuarios al cargar el componente
+    useEffect(() => {
+        const obtenerUsuarios = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/api/usuarios', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                setUsuarios(response.data);
+            } catch (error) {
+                setError("Error al obtener usuarios.");
+                console.error("Error:", error);
+            }
+        };
+        obtenerUsuarios();
+        const obtenerTutores = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/api/tutores', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                console.log(response.data);
+                setTutores(response.data);
+            } catch (error) {
+                setError("Error al obtener usuarios.");
+                console.error("Error:", error);
+            }
+        };
+        obtenerTutores();
+    }, []);
+
+    // Manejar la selección de un usuario para completar el celular
+    const handleSeleccionUsuario = (selectedOption) => {
+        setNombre(selectedOption.label);
+        setCelular(selectedOption.value);
+        setIdUsuario(selectedOption.idUsuario);
+    };
+
+    // Manejar la selección de un usuario para completar el celular
+    const handleSeleccionTutor = (selectedOption) => {
+        setNombreTutor(selectedOption.label);
+        setIdTutor(selectedOption.idTutor);
+    };
+
     useEffect(() => {
         const fechaFormateada = selectedDate.toISOString().split('T')[0]; // Formato YYYY-MM-DD
         obtenerHorariosDisponibles(fechaFormateada);
@@ -107,15 +160,19 @@ function AgendarCita() {
 
         // Crear el objeto con los datos de la cita
         const cita = {
+            usuario_id: idUsuario,
+            tutor_id: idTutor,
             fecha: selectedDate.toISOString().split('T')[0], // Formato YYYY-MM-DD
             hora: convertirHora12a24(selectedTime), // Convertir a formato de 24 horas
-            nombre: nombre,
-            celular: celular,
         };
-
+        console.log(cita);
         try {
             // Enviar los datos al backend
-            const response = await axios.post('http://localhost:8000/api/agendarcitas', cita);
+            const response = await axios.post('http://localhost:8000/api/agendarcitas', cita, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
             
             // Obtenemos el código de la cita
             const codigoCita = response.data.codigo; 
@@ -179,15 +236,15 @@ function AgendarCita() {
                         </select>
                     </div>
 
-                    {/* Nombre */}
+                    {/* id usuario */}
+                    <input value={idUsuario} disabled/>
+                    {/* Nombre con autocompletado */}
                     <div className="form-group">
                         <label>Nombre:</label>
-                        <input
-                            type="text"
-                            value={nombre}
-                            onChange={(e) => setNombre(e.target.value)}
-                            placeholder="Ingresa tu nombre"
-                            required
+                        <Select
+                            options={usuarios.map(user => ({ label: user.nombre, value: user.celular,idUsuario:user.id }))}
+                            onChange={handleSeleccionUsuario}
+                            placeholder="Ingresa o selecciona un nombre"
                             className="input-field"
                         />
                     </div>
@@ -213,6 +270,19 @@ function AgendarCita() {
                             className="input-field"
                         />
                         {errorCelular && <p className="error-message">{errorCelular}</p>}
+                    </div>
+                    
+                    {/* id tutor */}
+                    <input value={idTutor} disabled/>
+                    {/* Nombre con autocompletado */}
+                    <div className="form-group">
+                        <label>Encargado:</label>
+                        <Select
+                            options={tutores.map(tutor => ({ label: tutor.nombre_completo,idTutor:tutor.id }))}
+                            onChange={handleSeleccionTutor}
+                            placeholder="Ingresa o selecciona un nombre"
+                            className="input-field"
+                        />
                     </div>
 
                     {/* Botones */}

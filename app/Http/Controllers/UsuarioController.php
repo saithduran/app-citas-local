@@ -29,7 +29,11 @@ class UsuarioController extends Controller
     
         return response()->json($usuarios);
     }
-    
+
+    public function datos(){
+        $usuario = Usuarios::find($id);
+        return response()->json($usuario);
+    }
 
     public function destroy($id){
         $usuario = Usuarios::find($id);

@@ -13,18 +13,18 @@ class CitaController extends Controller
         $request->validate([
             'fecha' => 'required|date',
             'hora' => 'required',
-            'nombre' => 'required|string|max:255',
-            'celular' => 'required|string|max:10',
+            // 'nombre' => 'required|string|max:255',
+            // 'celular' => 'required|string|max:10',
             'usuario_id' => 'required|exists:usuarios,id', // Validamos que el usuario exista
         ]);
     
         $cita = Cita::create([
+            'codigo' => uniqid(), // Generamos un código único
+            'usuario_id' => $request->usuario_id, // Asignamos el usuario
             'fecha' => $request->fecha,
             'hora' => $request->hora,
-            'nombre' => $request->nombre,
-            'celular' => $request->celular,
-            'usuario_id' => $request->usuario_id, // Asignamos el usuario
-            'codigo' => uniqid(), // Generamos un código único
+            // 'nombre' => $request->nombre,
+            // 'celular' => $request->celular,
         ]);
     
         return response()->json([
@@ -40,7 +40,7 @@ class CitaController extends Controller
     
         $eventos = $citas->map(function ($cita) {
             return [
-                'title' => 'Cita con ' . $cita->nombre,
+                'title' => 'Cita con ',
                 'start' => $cita->fecha,
                 'hora' => $cita->hora,
                 'codigo' => $cita->codigo,
@@ -101,16 +101,16 @@ class CitaController extends Controller
 
         $request->validate([
             'fecha' => 'required|date',
+            // 'celular' => 'required|string|max:10',
             'hora' => 'required',
-            'nombre' => 'required|string|max:255',
-            'celular' => 'required|string|max:10',
+            // 'nombre' => 'required|string|max:255',
         ]);
 
         $cita->update([
             'fecha' => $request->fecha,
             'hora' => $request->hora,
-            'nombre' => $request->nombre,
-            'celular' => $request->celular
+            // 'nombre' => $request->nombre,
+            // 'celular' => $request->celular
         ]);
 
         return response()->json(['mensaje' => 'Cita actualizada con éxito']);

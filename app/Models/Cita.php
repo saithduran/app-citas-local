@@ -8,11 +8,15 @@ use Illuminate\Support\Str;
 class Cita extends Model
 {
     protected $fillable = [
-        'usuario_id', 'fecha', 'hora'
+        'usuario_id', 'fecha', 'hora','tutor_id'
     ];
 
     public function usuario() {
         return $this->belongsTo(Usuarios::class, 'usuario_id');
+    }
+
+    public function tutores() {
+        return $this->belongsTo(Tutor::class, 'tutor_id');
     }
 
     /**
@@ -38,4 +42,5 @@ class Cita extends Model
             $cita->codigo = self::generarCodigoUnico();
         });
     }
+
 }
