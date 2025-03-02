@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
-import { es } from "date-fns/locale"; 
+import { es } from "date-fns/locale";
+import Navbar from '../components/navbar';
 import 'react-datepicker/dist/react-datepicker.css'; // Estilos del calendario
 import { Link,useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Importa Axios
@@ -31,6 +32,29 @@ function AgendarCita() {
     const [errorCelular, setErrorCelular] = useState('');
     // Estado para deshabilitar el botón mientras se envía la solicitud
     const [enviando, setEnviando] = useState(false);
+    //Capturar usuario para dshboard
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/api/user', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                setUser(response.data);
+            } catch (error) {
+                console.error('Error al obtener el usuario', error);
+                if (error.response && error.response.status === 401) {
+                    localStorage.removeItem('token');
+                    navigate('/login');
+                }
+            }
+        };
+
+        fetchUser();
+    }, [navigate]);
 
     // Función para convertir horarios de 24 a 12 horas
     const convertirHora24a12 = (hora24) => {
@@ -198,103 +222,106 @@ function AgendarCita() {
 
 
     return (
-        <div className="agendar-container">
-            <div className="agendar-card">
-                <img src="/logo3.png" alt="Logo Ministerio Altar Del Santisimo" className="home-logo" />
-                <h1 className="agendar-title">Agendar Cita</h1>
-                {mensajeExito && <div className="alerta-exito">{mensajeExito}</div>} 
-                {error && <p className="error-message">{error}</p>}
-                {errorCelular && <p className="error-message">{errorCelular}</p>}
-                <form onSubmit={handleSubmit} className="agendar-form">
-                    {/* Fecha */}
-                    <div className="form-group">
-                        <label>Selecciona una fecha:</label>
-                        <DatePicker
-                            selected={selectedDate}
-                            onChange={(date) => setSelectedDate(date)}
-                            dateFormat="dd/MM/yyyy"
-                            minDate={new Date()}
-                            locale={es}
-                            className="input-field"
-                        />
-                    </div>
+        <div>
+            <Navbar user={user} />
+            <div className="agendar-container">
+                <div className="agendar-card">
+                    <img src="/logo3.png" alt="Logo Ministerio Altar Del Santisimo" className="home-logo" />
+                    <h1 className="agendar-title">Agendar Cita</h1>
+                    {mensajeExito && <div className="alerta-exito">{mensajeExito}</div>} 
+                    {error && <p className="error-message">{error}</p>}
+                    {errorCelular && <p className="error-message">{errorCelular}</p>}
+                    <form onSubmit={handleSubmit} className="agendar-form">
+                        {/* Fecha */}
+                        <div className="form-group">
+                            <label>Selecciona una fecha:</label>
+                            <DatePicker
+                                selected={selectedDate}
+                                onChange={(date) => setSelectedDate(date)}
+                                dateFormat="dd/MM/yyyy"
+                                minDate={new Date()}
+                                locale={es}
+                                className="input-field"
+                            />
+                        </div>
 
-                    {/* Campo para seleccionar el horario */}
-                    <div className="form-group">
-                        <label>Selecciona un horario:</label>
-                        <select
-                            value={selectedTime}
-                            onChange={(e) => setSelectedTime(e.target.value)}
-                            required
-                        >
-                            <option value="">Selecciona un horario</option>
-                            {horariosDisponibles.map((horario, index) => (
-                                <option key={index} value={horario}>
-                                    {horario}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                        {/* Campo para seleccionar el horario */}
+                        <div className="form-group">
+                            <label>Selecciona un horario:</label>
+                            <select
+                                value={selectedTime}
+                                onChange={(e) => setSelectedTime(e.target.value)}
+                                required
+                            >
+                                <option value="">Selecciona un horario</option>
+                                {horariosDisponibles.map((horario, index) => (
+                                    <option key={index} value={horario}>
+                                        {horario}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
 
-                    {/* id usuario */}
-                    <input value={idUsuario} disabled/>
-                    {/* Nombre con autocompletado */}
-                    <div className="form-group">
-                        <label>Nombre:</label>
-                        <Select
-                            options={usuarios.map(user => ({ label: user.nombre, value: user.celular,idUsuario:user.id }))}
-                            onChange={handleSeleccionUsuario}
-                            placeholder="Ingresa o selecciona un nombre"
-                            className="input-field"
-                        />
-                    </div>
+                        {/* id usuario */}
+                        <input value={idUsuario} disabled/>
+                        {/* Nombre con autocompletado */}
+                        <div className="form-group">
+                            <label>Nombre:</label>
+                            <Select
+                                options={usuarios.map(user => ({ label: user.nombre, value: user.celular,idUsuario:user.id }))}
+                                onChange={handleSeleccionUsuario}
+                                placeholder="Ingresa o selecciona un nombre"
+                                className="input-field"
+                            />
+                        </div>
 
-                    {/* Celular */}
-                    <div className="form-group">
-                        <label>Número de celular:</label>
-                        <input
-                            type="tel"
-                            value={celular}
-                            onChange={(e) => {
-                                const input = e.target.value;
-                                if (/^\d{0,10}$/.test(input)) {
-                                    setCelular(input);
-                                    setErrorCelular('');
-                                } else {
-                                    setErrorCelular('Solo se permiten números y un máximo de 10 dígitos.');
-                                }
-                            }}
-                            placeholder="Ingresa tu número de celular"
-                            maxLength={10}
-                            required
-                            className="input-field"
-                        />
-                        {errorCelular && <p className="error-message">{errorCelular}</p>}
-                    </div>
-                    
-                    {/* id tutor */}
-                    <input value={idTutor} disabled/>
-                    {/* Nombre con autocompletado */}
-                    <div className="form-group">
-                        <label>Encargado:</label>
-                        <Select
-                            options={tutores.map(tutor => ({ label: tutor.nombre_completo,idTutor:tutor.id }))}
-                            onChange={handleSeleccionTutor}
-                            placeholder="Ingresa o selecciona un nombre"
-                            className="input-field"
-                        />
-                    </div>
+                        {/* Celular */}
+                        <div className="form-group">
+                            <label>Número de celular:</label>
+                            <input
+                                type="tel"
+                                value={celular}
+                                onChange={(e) => {
+                                    const input = e.target.value;
+                                    if (/^\d{0,10}$/.test(input)) {
+                                        setCelular(input);
+                                        setErrorCelular('');
+                                    } else {
+                                        setErrorCelular('Solo se permiten números y un máximo de 10 dígitos.');
+                                    }
+                                }}
+                                placeholder="Ingresa tu número de celular"
+                                maxLength={10}
+                                required
+                                className="input-field"
+                            />
+                            {errorCelular && <p className="error-message">{errorCelular}</p>}
+                        </div>
+                        
+                        {/* id tutor */}
+                        <input value={idTutor} disabled/>
+                        {/* Nombre con autocompletado */}
+                        <div className="form-group">
+                            <label>Encargado:</label>
+                            <Select
+                                options={tutores.map(tutor => ({ label: tutor.nombre_completo,idTutor:tutor.id }))}
+                                onChange={handleSeleccionTutor}
+                                placeholder="Ingresa o selecciona un nombre"
+                                className="input-field"
+                            />
+                        </div>
 
-                    {/* Botones */}
-                    <div className="button-group">
-                        <button type="submit" className="agendar_buttons confirm" disabled={enviando}>
-                            {enviando ? "Agendando..." : "Confirmar Cita"}
-                        </button>
-                        <Link to="/dashboard">
-                            <button className="agendar_buttons back">Volver al Inicio</button>
-                        </Link>
-                    </div>
-                </form>
+                        {/* Botones */}
+                        <div className="button-group">
+                            <button type="submit" className="agendar_buttons confirm" disabled={enviando}>
+                                {enviando ? "Agendando..." : "Confirmar Cita"}
+                            </button>
+                            <Link to="/dashboard">
+                                <button className="agendar_buttons back">Volver al Inicio</button>
+                            </Link>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     );

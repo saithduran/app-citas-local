@@ -16,11 +16,13 @@ class CitaController extends Controller
             // 'nombre' => 'required|string|max:255',
             // 'celular' => 'required|string|max:10',
             'usuario_id' => 'required|exists:usuarios,id', // Validamos que el usuario exista
+            'tutor_id' => 'required|exists:tutores,id', // Validamos que el usuario exista
         ]);
     
         $cita = Cita::create([
             'codigo' => uniqid(), // Generamos un código único
             'usuario_id' => $request->usuario_id, // Asignamos el usuario
+            'tutor_id' => $request->tutor_id, // Asignamos el usuario
             'fecha' => $request->fecha,
             'hora' => $request->hora,
             // 'nombre' => $request->nombre,
@@ -81,7 +83,7 @@ class CitaController extends Controller
     }
 
     public function show($codigo){
-        $cita = Cita::with('usuario')->where('codigo', $codigo)->first();
+        $cita = Cita::with(['usuario', 'tutores'])->where('codigo', $codigo)->first();
     
         if (!$cita) {
             return response()->json(['mensaje' => 'Cita no encontrada'], 404);

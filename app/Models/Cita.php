@@ -16,7 +16,7 @@ class Cita extends Model
     }
 
     public function tutores() {
-        return $this->belongsTo(Tutor::class, 'tutor_id');
+        return $this->belongsTo(Tutores::class, 'tutor_id');
     }
 
     /**
