@@ -5,6 +5,8 @@ import './navbar.css';
 
 function Navbar({ user }) {
     const navigate = useNavigate();
+    const [isDropdownOpenUsuarios, setIsDropdownOpenUsuarios] = useState(false);
+    const [isDropdownOpenEncargados, setIsDropdownOpenEncargados] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
 
     const handleLogout = async () => {
@@ -25,18 +27,49 @@ function Navbar({ user }) {
     return (
         <nav className="navbar">
             <div className="navbar-container">
-                <Link to="/dashboard" className="navbar-logo">AdminCitas</Link>
+                {/* Logo */}
+                <Link to="/dashboard" className="navbar-logo">
+                    <img src="/logo3-mb.png" alt="Logo Ministerio Altar Del Santisimo" className="navbar-logo" />
+                </Link>
+
+                {/* Botón de menú móvil */}
                 <button className="navbar-toggle" onClick={() => setIsOpen(!isOpen)}>
-                    &#9776;
+                    &#9776; {/* Ícono de hamburguesa */}
                 </button>
+
+                {/* Menú principal */}
                 <div className={`navbar-menu ${isOpen ? 'active' : ''}`}>
                     <Link to="/dashboard" className="navbar-item">Calendario</Link>
                     <Link to="/agendarcita" className="navbar-item">Agendar Cita</Link>
-                    <Link to="/registrousuarios" className="navbar-item">Registro de Usuario</Link>
-                    <Link to="/listadousuarios" className="navbar-item">Listado de Usuarios</Link>
-                    <Link to="/registrotutores" className="navbar-item">Registro de Encargado</Link>
-                    <Link to="/listadotutores" className="navbar-item">Listado de Encargados</Link>
-                    {user && <span className="navbar-user">{user.username}</span>}
+                    <div className="navbar-dropdown">
+                        <button
+                            className="navbar-item dropdown-toggle"
+                            onClick={() => setIsDropdownOpenUsuarios(!isDropdownOpenUsuarios)}
+                        >
+                            Usuarios
+                        </button>
+
+                        {/* Menú desplegable */}
+                        <div className={`dropdown-menu ${isDropdownOpenUsuarios ? 'active' : ''}`}>
+                            <Link to="/registrousuarios" className="dropdown-item">Registro de Usuario</Link>
+                            <Link to="/listadousuarios" className="dropdown-item">Listado de Usuarios</Link>
+                        </div>
+                    </div>
+                    {/* Dropdown para el usuario */}
+                    <div className="navbar-dropdown">
+                        <button
+                            className="navbar-item dropdown-toggle"
+                            onClick={() => setIsDropdownOpenEncargados(!isDropdownOpenEncargados)}
+                        >
+                            Encargado
+                        </button>
+
+                        {/* Menú desplegable */}
+                        <div className={`dropdown-menu ${isDropdownOpenEncargados ? 'active' : ''}`}>
+                            <Link to="/registrotutores" className="dropdown-item">Registro de Encargado</Link>
+                            <Link to="/listadotutores" className="dropdown-item">Listado de Encargados</Link>
+                        </div>
+                    </div>
                     <button className="navbar-item logout" onClick={handleLogout}>Cerrar Sesión</button>
                 </div>
             </div>

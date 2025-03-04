@@ -30,9 +30,38 @@ class UsuarioController extends Controller
         return response()->json($usuarios);
     }
 
-    public function datos(){
-        $usuario = Usuarios::find($id);
+    public function datos($id){
+        $usuario = Usuarios::select('id','nombre', 'celular', 'direccion')->where('id', $id)->first();
+        
+        if (!$usuario) {
+            return response()->json(['mensaje' => 'Usuario no encontrada'], 404);
+        }
+    
         return response()->json($usuario);
+    }
+
+    // Actualizar una cita
+    public function update(Request $request, $id){
+    
+        $usuario = Usuarios::where('id', $id)->first();
+
+        if (!$usuario) {
+            return response()->json(['mensaje' => 'Usuario no encontrada'], 404);
+        }
+
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'celular' => 'required|string|max:10',
+            'direccion' => 'required|string|max:255'
+        ]);
+
+        $usuario->update([
+            'nombre' => $request->nombre,
+            'celular' => $request->celular,
+            'direccion' => $request->direccion
+        ]);
+
+        return response()->json(['mensaje' => 'Usuario actualizada con éxito']);
     }
 
     public function destroy($id){

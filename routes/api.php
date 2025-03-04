@@ -31,9 +31,9 @@ Route::delete('/usuario/{id}', [UsuarioController::class, 'destroy'])->middlewar
 //Tutores
 Route::post('/registrartutor', [TutorController::class, 'store'])->middleware('auth:sanctum');
 Route::get('/tutores', [TutorController::class, 'index'])->middleware('auth:sanctum');
-Route::get('/tutores/{id}', [TutorController::class, 'datos'])->middleware('auth:sanctum');
-Route::put('/tutores/{id}', [TutorController::class, 'update'])->middleware('auth:sanctum');
-Route::delete('/tutores/{id}', [TutorController::class, 'destroy'])->middleware('auth:sanctum');
+Route::get('/tutor/{id}', [TutorController::class, 'datos'])->middleware('auth:sanctum');
+// Route::put('/tutor/{id}', [TutorController::class, 'update'])->middleware('auth:sanctum');
+Route::delete('/tutor/{id}', [TutorController::class, 'destroy'])->middleware('auth:sanctum');
 //Rutas para agendamieto de citas
 Route::post('/agendarcitas', [CitaController::class, 'store'])->middleware('auth:sanctum');
 Route::get('/horarios-disponibles/{fecha}', [CitaController::class, 'getHorariosDisponibles']);

@@ -109,12 +109,19 @@ function DetalleCita() {
             return;
         }
         try {
-            await axios.put(`http://localhost:8000/api/cita/${codigo}`, {
+            await axios.put(`http://localhost:8000/api/cita/${codigo}`, 
+                {
                 // nombre,
                 // celular,
                 fecha: selectedDate.toISOString().split('T')[0],
                 hora: convertirHora12a24(selectedTime),
-            });
+                }, 
+                { // Aquí se pasa la configuración con el header Authorization
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                }
+            );
     
             setCita({
                 ...cita,

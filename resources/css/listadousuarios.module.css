@@ -65,10 +65,12 @@
 .BtnEdit {
     background-color: #2563eb;
     color: white;
+    border: none;
+    cursor: pointer;
 }
 
 .BtnEdit:hover {
-    background-color: #1d4ed8;
+    background-color: #1b3c98;
 }
 
 /* Botón Eliminar */

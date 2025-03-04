@@ -19,3 +19,12 @@
     border-color: #2D2C84;
     color: white;
 }
+@media (max-width: 768px) {
+    .fc-toolbar-title{
+        font-size: 1.2em !important;
+    }
+    .fc-view-harness.fc-view-harness-active{
+        height: 700px !important;
+     }
+
+}

@@ -57,7 +57,7 @@ const ListadoTutores = () => {
         }
 
         try {
-            await axios.delete(`http://localhost:8000/api/tutores/${id}`, { 
+            await axios.delete(`http://localhost:8000/api/tutor/${id}`, { 
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`
                 }

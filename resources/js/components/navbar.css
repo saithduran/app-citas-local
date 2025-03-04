@@ -1,98 +1,126 @@
-/* Estilos para el Navbar */
+/* Estilos generales del navbar */
 .navbar {
-    background-color: #2D2C84;
-    padding: 1rem;
+    background-color: #2D2C84; /* Color de fondo */
+    padding: 10px 20px !important;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: white;
 }
 
 .navbar-container {
     display: flex;
-    width: 100%;
-    max-width: 95%;
-    margin: 0 auto;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
 }
 
 .navbar-logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-decoration: none;
-    color: white;
+    height: 64px; /* Ajusta el tamaño del logo */
+    width: 135px;
 }
 
-/* Asegurar alineación vertical en el menú */
+.navbar-toggle {
+    display: none; /* Oculta el botón en pantallas grandes */
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+}
+
 .navbar-menu {
     display: flex;
-    align-items: center; /* Centra verticalmente los elementos */
-    gap: 1.2rem;
-}
-
-/* Alinear el usuario en el centro */
-.navbar-user {
-    font-weight: bold;
-    color: white;
-    padding: 0.6rem 1.2rem;
-    display: flex;
-    align-items: center; /* Centrar verticalmente */
-    justify-content: center;
+    align-items: center;
+    gap: 20px; /* Espacio entre elementos del menú */
 }
 
 .navbar-item {
-    text-decoration: none;
     color: white;
-    padding: 0.5rem 1rem;
-    transition: background 0.3s;
+    text-decoration: none;
+    font-size: 16px;
+    padding: 10px;
+    transition: background-color 0.3s ease;
 }
 
 .navbar-item:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background-color: #E8510E; /* Color al hacer hover */
+    border-radius: 5px;
+}
+
+/* Estilos para el menú móvil */
+@media (max-width: 768px) {
+    .navbar-toggle {
+        display: block; /* Muestra el botón en pantallas pequeñas */
+    }
+
+    .navbar-menu {
+        display: none; /* Oculta el menú en pantallas pequeñas */
+        flex-direction: column;
+        position: absolute;
+        top: 70px;
+        right: 20px;
+        background-color: #2D2C84;
+        border-radius: 5px;
+        padding: 10px;
+    }
+
+    .navbar-menu.active {
+        display: flex; /* Muestra el menú cuando está activo */
+        z-index: 2;
+    }
+}
+
+/* Estilos para el dropdown */
+.navbar-dropdown {
+    position: relative;
+}
+
+.dropdown-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.dropdown-menu {
+    display: none; /* Oculta el menú desplegable por defecto */
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: #2D2C84;
+    border-radius: 5px;
+    padding: 10px;
+    min-width: 150px;
+    z-index: 1000;
+}
+
+.dropdown-menu.active {
+    display: block; /* Muestra el menú desplegable cuando está activo */
+}
+
+.dropdown-item {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #E8510E; /* Color al hacer hover */
     border-radius: 5px;
 }
 
 .logout {
-    background: #E8510E;
+    background-color: #E8510E; /* Color para el botón de cerrar sesión */
     border: none;
-    cursor: pointer;
-    padding: 0.5rem 1rem;
     color: white;
+    cursor: pointer;
     border-radius: 5px;
 }
 
 .logout:hover {
-    background: #C53030;
-}
-
-/* Responsive */
-.navbar-toggle {
-    display: none;
-    font-size: 2rem;
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-}
-
-@media (max-width: 768px) {
-    .navbar-menu {
-        display: none;
-        flex-direction: column;
-        width: 100%;
-        position: absolute;
-        top: 60px;
-        left: 0;
-        background: #2D2C84;
-        text-align: center;
-    }
-
-    .navbar-menu.active {
-        display: flex;
-    }
-
-    .navbar-toggle {
-        display: block;
-    }
+    background-color: #ff6b35; /* Color al hacer hover */
 }
