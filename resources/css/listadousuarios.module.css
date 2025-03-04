@@ -1,5 +1,5 @@
 /* Contenedor de la lista de usuarios */
-.agendar-container {
+.tutoresContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -11,7 +11,7 @@
 }
 
 /* Tarjeta donde está la tabla */
-.agendar-card {
+.tutoresCard {
     background-color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 1rem;
@@ -22,7 +22,7 @@
 }
 
 /* Estilos para la tabla */
-.user-table {
+.userTable {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1rem;
@@ -33,25 +33,25 @@
 }
 
 /* Encabezado de la tabla */
-.user-table thead {
+.userTable thead {
     background-color: #2D2C84;
     color: white;
-    text-align: left;
+    
 }
 
-.user-table th, 
-.user-table td {
+.userTable th, 
+.userTable td {
     padding: 12px;
     border-bottom: 1px solid #ddd;
 }
 
 /* Alternar colores de filas para mejorar la legibilidad */
-.user-table tbody tr:nth-child(even) {
+.userTable tbody tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
 /* Estilos para botones de acción */
-.btn-edit, .btn-delete {
+.BtnEdit, .BtnDelete {
     display: inline-block;
     padding: 8px 12px;
     margin: 4px;
@@ -62,55 +62,55 @@
 }
 
 /* Botón Editar */
-.btn-edit {
+.BtnEdit {
     background-color: #2563eb;
     color: white;
 }
 
-.btn-edit:hover {
+.BtnEdit:hover {
     background-color: #1d4ed8;
 }
 
 /* Botón Eliminar */
-.btn-delete {
+.BtnDelete {
     background-color: #e8510e;
     color: white;
     border: none;
     cursor: pointer;
 }
 
-.btn-delete:hover {
+.BtnDelete:hover {
     background-color: #b91c1c;
 }
 
 /* Responsividad */
 @media (max-width: 768px) {
-    .agendar-card {
+    .tutoresCard {
         padding: 1rem;
     }
 
-    .user-table th, 
-    .user-table td {
+    .userTable, 
+    .userTable {
         padding: 8px;
         font-size: 14px;
     }
 
-    .btn-edit, .btn-delete {
+    .BtnEdit, .BtnDelete {
         padding: 6px 10px;
         font-size: 12px;
     }
 }
 
 @media (max-width: 480px) {
-    .agendar-card {
+    .tutoresCard {
         width: 100%;
     }
 
-    .user-table {
+    .userTable {
         font-size: 12px;
     }
 
-    .btn-edit, .btn-delete {
+    .BtnEdit, .BtnDelete {
         padding: 5px 8px;
         font-size: 11px;
     }

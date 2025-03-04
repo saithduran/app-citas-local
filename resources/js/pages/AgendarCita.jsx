@@ -3,36 +3,27 @@ import DatePicker from 'react-datepicker';
 import { es } from "date-fns/locale";
 import Navbar from '../components/navbar';
 import 'react-datepicker/dist/react-datepicker.css'; // Estilos del calendario
-import { Link,useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Importa Axios
-import '../../css/agendarcita.css'; // Importa el archivo CSS
+import styles from '../../css/agendarcita.module.css'; // Importa el archivo CSS
 import Select from 'react-select'; // Para autocompletado de nombres
 
 function AgendarCita() {
     const navigate = useNavigate();
-    // Estado para la fecha seleccionada
     const [selectedDate, setSelectedDate] = useState(new Date());
-    // Estado para el horario seleccionado
     const [selectedTime, setSelectedTime] = useState('');
-    // Estado para el nombre y el número de celular
     const [nombre, setNombre] = useState('');
     const [celular, setCelular] = useState('');
     const [idUsuario, setIdUsuario] = useState('');
     const [usuarios, setUsuarios] = useState([]);
-    // Estado para el nombre y el número de celular
     const [nombreTutor, setNombreTutor] = useState('');
     const [idTutor, setIdTutor] = useState('');
     const [tutores, setTutores] = useState([]);
-    // Estado para los horarios disponibles
     const [horariosDisponibles, setHorariosDisponibles] = useState([]);
-    // Estado para mostrar el mensaje
-    const [mensajeExito, setMensajeExito] = useState(""); 
-    // Estado para mensajes de error
+    const [mensajeExito, setMensajeExito] = useState("");
     const [error, setError] = useState('');
     const [errorCelular, setErrorCelular] = useState('');
-    // Estado para deshabilitar el botón mientras se envía la solicitud
     const [enviando, setEnviando] = useState(false);
-    //Capturar usuario para dshboard
     const [user, setUser] = useState(null);
 
     useEffect(() => {
@@ -56,7 +47,6 @@ function AgendarCita() {
         fetchUser();
     }, [navigate]);
 
-    // Función para convertir horarios de 24 a 12 horas
     const convertirHora24a12 = (hora24) => {
         const [hora, minutos] = hora24.split(':');
         let hora12 = parseInt(hora, 10);
@@ -70,7 +60,6 @@ function AgendarCita() {
         return `${String(hora12).padStart(2, '0')}:${minutos} ${periodo}`;
     };
 
-    // Función para convertir horarios de 12 a 24 horas
     const convertirHora12a24 = (hora12) => {
         const [hora, minutos, periodo] = hora12.match(/(\d+):(\d+) (\w+)/).slice(1);
         let hora24 = parseInt(hora, 10);
@@ -83,29 +72,25 @@ function AgendarCita() {
         return `${String(hora24).padStart(2, '0')}:${minutos}`;
     };
 
-    // Obtener los horarios disponibles cuando cambia la fecha
     const obtenerHorariosDisponibles = async (fecha) => {
         try {
             const response = await axios.get(`http://localhost:8000/api/horarios-disponibles/${fecha}`);
-            //console.log('Respuesta del backend:', response.data); // Verifica la respuesta
-    
             if (Array.isArray(response.data)) {
                 if (response.data.length > 0) {
                     const horarios12h = response.data.map(convertirHora24a12);
                     setHorariosDisponibles(horarios12h);
                 } else {
-                    setHorariosDisponibles([]); // No hay horarios disponibles
+                    setHorariosDisponibles([]);
                 }
             } else {
                 console.error('La respuesta del backend no es un array:', response.data);
             }
         } catch (error) {
             console.error('Error al obtener horarios disponibles:', error);
-            setHorariosDisponibles([]); // Asegurar que se limpien los horarios si hay un error
+            setHorariosDisponibles([]);
         }
     };
-    
-    // Obtener lista de usuarios al cargar el componente
+
     useEffect(() => {
         const obtenerUsuarios = async () => {
             try {
@@ -128,7 +113,6 @@ function AgendarCita() {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
                 });
-                console.log(response.data);
                 setTutores(response.data);
             } catch (error) {
                 setError("Error al obtener usuarios.");
@@ -138,102 +122,85 @@ function AgendarCita() {
         obtenerTutores();
     }, []);
 
-    // Manejar la selección de un usuario para completar el celular
     const handleSeleccionUsuario = (selectedOption) => {
         setNombre(selectedOption.label);
         setCelular(selectedOption.value);
         setIdUsuario(selectedOption.idUsuario);
     };
 
-    // Manejar la selección de un usuario para completar el celular
     const handleSeleccionTutor = (selectedOption) => {
         setNombreTutor(selectedOption.label);
         setIdTutor(selectedOption.idTutor);
     };
 
     useEffect(() => {
-        const fechaFormateada = selectedDate.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+        const fechaFormateada = selectedDate.toISOString().split('T')[0];
         obtenerHorariosDisponibles(fechaFormateada);
     }, [selectedDate]);
 
-    // Función para validar el número de celular
     const validarCelular = (numero) => {
-        const regex = /^\d{10}$/; // Asegura que sean exactamente 10 dígitos
+        const regex = /^\d{10}$/;
         return regex.test(numero);
     };
 
-    // Función para manejar el envío del formulario
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setErrorCelular('');
 
-        // Validar que todos los campos estén completos
         if (!nombre || !celular || !selectedTime) {
             setError('Por favor, completa todos los campos.');
             return;
         }
 
-        // Validar el número de celular
         if (!validarCelular(celular)) {
             setErrorCelular('Por favor, ingresa un número de celular válido (10 dígitos).');
             return;
         }
 
-        setEnviando(true); // Deshabilitar botón mientras se envía
+        setEnviando(true);
 
-        // Crear el objeto con los datos de la cita
         const cita = {
             usuario_id: idUsuario,
             tutor_id: idTutor,
-            fecha: selectedDate.toISOString().split('T')[0], // Formato YYYY-MM-DD
-            hora: convertirHora12a24(selectedTime), // Convertir a formato de 24 horas
+            fecha: selectedDate.toISOString().split('T')[0],
+            hora: convertirHora12a24(selectedTime),
         };
-        console.log(cita);
+
         try {
-            // Enviar los datos al backend
             const response = await axios.post('http://localhost:8000/api/agendarcitas', cita, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            
-            // Obtenemos el código de la cita
-            const codigoCita = response.data.codigo; 
-            // Mostramos el mensaje con el código
+            const codigoCita = response.data.codigo;
             setMensajeExito(`✅ Cita creada con éxito. Tu código es: ${codigoCita}. Guardalo para consultar tu cita si quieres cancelarla o modificarla después.`);
-            
-            // Limpiar formulario después de 30 segundos
             setTimeout(() => {
                 setMensajeExito("");
-                navigate("/"); // Redirige al usuario al inicio
+                navigate("/");
             }, 30000);
-
-            // Actualizar la lista de horarios disponibles
             const fechaFormateada = selectedDate.toISOString().split('T')[0];
             await obtenerHorariosDisponibles(fechaFormateada);
         } catch (error) {
             console.error('Error al agendar la cita:', error);
             setError('Hubo un error al agendar la cita. Por favor, intenta nuevamente.');
         } finally {
-            setEnviando(false); // Habilitar el botón nuevamente
+            setEnviando(false);
         }
     };
-
 
     return (
         <div>
             <Navbar user={user} />
-            <div className="agendar-container">
-                <div className="agendar-card">
-                    <img src="/logo3.png" alt="Logo Ministerio Altar Del Santisimo" className="home-logo" />
-                    <h1 className="agendar-title">Agendar Cita</h1>
-                    {mensajeExito && <div className="alerta-exito">{mensajeExito}</div>} 
-                    {error && <p className="error-message">{error}</p>}
-                    {errorCelular && <p className="error-message">{errorCelular}</p>}
+            <div className={styles.agendarContainer}>
+                <div className={styles.agendarCard}>
+                    <img src="/logo3.png" alt="Logo Ministerio Altar Del Santisimo" className={styles.homeLogo} />
+                    <h1 className={styles.agendarTitulo}>Agendar Cita</h1>
+                    {mensajeExito && <div className="alerta-exito">{mensajeExito}</div>}
+                    {error && <p className={styles.errorMessage}>{error}</p>}
+                    {errorCelular && <p className={styles.errorMessage}>{errorCelular}</p>}
                     <form onSubmit={handleSubmit} className="agendar-form">
-                        {/* Fecha */}
-                        <div className="form-group">
+                        <div className={styles.formGroup}>
                             <label>Selecciona una fecha:</label>
                             <DatePicker
                                 selected={selectedDate}
@@ -241,12 +208,11 @@ function AgendarCita() {
                                 dateFormat="dd/MM/yyyy"
                                 minDate={new Date()}
                                 locale={es}
-                                className="input-field"
+                                className={`${styles.inputField}`} // Combina tus estilos con los del DatePicker
                             />
                         </div>
 
-                        {/* Campo para seleccionar el horario */}
-                        <div className="form-group">
+                        <div className={styles.formGroup}>
                             <label>Selecciona un horario:</label>
                             <select
                                 value={selectedTime}
@@ -262,21 +228,18 @@ function AgendarCita() {
                             </select>
                         </div>
 
-                        {/* id usuario */}
-                        <input value={idUsuario} disabled/>
-                        {/* Nombre con autocompletado */}
-                        <div className="form-group">
+                        <input value={idUsuario} disabled type='hidden' />
+                        <div className={styles.formGroup}>
                             <label>Nombre:</label>
                             <Select
-                                options={usuarios.map(user => ({ label: user.nombre, value: user.celular,idUsuario:user.id }))}
+                                options={usuarios.map(user => ({ label: user.nombre, value: user.celular, idUsuario: user.id }))}
                                 onChange={handleSeleccionUsuario}
                                 placeholder="Ingresa o selecciona un nombre"
                                 className="input-field"
                             />
                         </div>
 
-                        {/* Celular */}
-                        <div className="form-group">
+                        <div className={styles.formGroup}>
                             <label>Número de celular:</label>
                             <input
                                 type="tel"
@@ -295,29 +258,26 @@ function AgendarCita() {
                                 required
                                 className="input-field"
                             />
-                            {errorCelular && <p className="error-message">{errorCelular}</p>}
+                            {errorCelular && <p className={styles.errorMessage}>{errorCelular}</p>}
                         </div>
-                        
-                        {/* id tutor */}
-                        <input value={idTutor} disabled/>
-                        {/* Nombre con autocompletado */}
-                        <div className="form-group">
+
+                        <input value={idTutor} disabled type='hidden' />
+                        <div className={styles.formGroup}>
                             <label>Encargado:</label>
                             <Select
-                                options={tutores.map(tutor => ({ label: tutor.nombre_completo,idTutor:tutor.id }))}
+                                options={tutores.map(tutor => ({ label: tutor.nombre_completo, idTutor: tutor.id }))}
                                 onChange={handleSeleccionTutor}
                                 placeholder="Ingresa o selecciona un nombre"
                                 className="input-field"
                             />
                         </div>
 
-                        {/* Botones */}
                         <div className="button-group">
-                            <button type="submit" className="agendar_buttons confirm" disabled={enviando}>
+                            <button type="submit" className={`${styles.agendarButtons} ${styles.confirm}`} disabled={enviando}>
                                 {enviando ? "Agendando..." : "Confirmar Cita"}
                             </button>
                             <Link to="/dashboard">
-                                <button className="agendar_buttons back">Volver al Inicio</button>
+                                <button className={`${styles.agendarButtons} ${styles.back}`}>Volver al Inicio</button>
                             </Link>
                         </div>
                     </form>

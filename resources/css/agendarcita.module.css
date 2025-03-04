@@ -1,7 +1,7 @@
 /* resources/css/app.css */
 
 /* Contenedor principal del formulario */
-.detalle-container {
+.agendarContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -13,13 +13,13 @@
 
 /* Ajuste responsivo para pantallas más pequeñas */
 @media (max-width: 768px) {
-    .detalle-container {
+    .agendarContainer {
         max-width: 100%;
         padding: 15px;
     }
 }
 
-.detalle-card {
+.agendarCard {
     background-color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 1rem;
@@ -30,37 +30,36 @@
 }
 
 @media (min-width: 640px) {
-    .detalle-card { max-width: 20rem; } /* Tablets */
+    .agendarCard { max-width: 32rem; } /* Tablets */
 }
   
   @media (min-width: 768px) {
-    .detalle-card { max-width: 26rem; } /* Pantallas medianas */
+    .agendarCard { max-width: 36rem; } /* Pantallas medianas */
   }
   
   @media (min-width: 1024px) {
-    .detalle-card { max-width: 32rem; } /* Pantallas grandes */
+    .agendarCard { max-width: 42rem; } /* Pantallas grandes */
   }
 
 /* Imagen del logo */
-.detalle-logo {
+.homeLogo {
     width: 40%;
     margin: 0 auto 1rem;
 }
 
 @media (max-width: 640px) {
-    .detalle-logo { content: url("/logo3-mb.png");}
+    .homeLogo { content: url("/logo3-mb.png");}
 }
 
 /* Estilo para el título */
-.titulo-detalle {
-    color: rgb(40, 193, 240);
-    font-size: 1.8rem;
+.agendarTitulo {
+    font-size: 2.5rem;
     font-weight: bold;
     margin-bottom: 20px;
 }
 
 /* Grupos de formularios */
-.form-group {
+.formGroup {
     margin-bottom: 20px;
     text-align: left;
 }
@@ -74,7 +73,7 @@ label {
 }
 
 /* Campos de entrada */
-input, select, .react-datepicker-wrapper {
+input, select {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
@@ -84,14 +83,15 @@ input, select, .react-datepicker-wrapper {
 }
 
 /* Estilo cuando el input está enfocado */
-input:focus, select:focus, .react-datepicker-wrapper:focus-within {
+input:focus, select:focus {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
 }
 
+
 /* Botones */
-.detalle_buttons {
+.agendarButtons {
     padding: 0.75rem;
     border-radius: 0.5rem;
     color: white;
@@ -101,26 +101,26 @@ input:focus, select:focus, .react-datepicker-wrapper:focus-within {
     text-decoration: none;
 }
 
-.detalle_buttons.cancelar {
-    background-color: #f53747;
-}
-
-.detalle_buttons.cancelar:hover {
-    background-color: #97353d; /* azul más oscuro */
-}
-
-.detalle_buttons.editar {
+.agendarButtons.confirm {
     background-color: #2D2C84;
 }
 
-.detalle_buttons.editar:hover {
+.agendarButtons.confirm:hover {
     background-color: #2563eb; /* azul más oscuro */
 }
 
-.detalle_buttons.back {
+.agendarButtons.back {
     background-color: #E8510E;
 }
 
-.detalle_buttons.back:hover {
+.agendarButtons.back:hover {
     background-color: #ec7b4a; /* verde más oscuro */
+}
+
+/* Mensajes de error */
+.errorMessage {
+    color: red;
+    font-weight: bold;
+    font-size: 14px;
+    margin-top: 5px;
 }

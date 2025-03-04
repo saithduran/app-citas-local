@@ -1,7 +1,7 @@
 /* resources/css/app.css */
 
 /* Contenedor principal del formulario */
-.agendar-container {
+.detalleContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -13,13 +13,13 @@
 
 /* Ajuste responsivo para pantallas más pequeñas */
 @media (max-width: 768px) {
-    .agendar-container {
+    .detalleContainer {
         max-width: 100%;
         padding: 15px;
     }
 }
 
-.agendar-card {
+.detalleCard {
     background-color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 1rem;
@@ -30,29 +30,29 @@
 }
 
 @media (min-width: 640px) {
-    .home-card { max-width: 32rem; } /* Tablets */
+    .detalleCard { max-width: 20rem; } /* Tablets */
 }
   
   @media (min-width: 768px) {
-    .home-card { max-width: 36rem; } /* Pantallas medianas */
+    .detalleCard { max-width: 26rem; } /* Pantallas medianas */
   }
   
   @media (min-width: 1024px) {
-    .home-card { max-width: 42rem; } /* Pantallas grandes */
+    .detalleCard { max-width: 32rem; } /* Pantallas grandes */
   }
 
 /* Imagen del logo */
-.home-logo {
+.detalle-logo {
     width: 40%;
     margin: 0 auto 1rem;
 }
 
 @media (max-width: 640px) {
-    .home-logo { content: url("/logo3-mb.png");}
+    .detalle-logo { content: url("/logo3-mb.png");}
 }
 
 /* Estilo para el título */
-.titulo_agendar {
+.titulo-detalle {
     color: rgb(40, 193, 240);
     font-size: 1.8rem;
     font-weight: bold;
@@ -91,7 +91,7 @@ input:focus, select:focus, .react-datepicker-wrapper:focus-within {
 }
 
 /* Botones */
-.agendar_buttons {
+.detalleButtons {
     padding: 0.75rem;
     border-radius: 0.5rem;
     color: white;
@@ -99,28 +99,29 @@ input:focus, select:focus, .react-datepicker-wrapper:focus-within {
     cursor: pointer;
     margin-right: 10px;
     text-decoration: none;
+    margin: 2px;
 }
 
-.agendar_buttons.confirm {
-    background-color: #2D2C84;
+.detalleButtons.cancelar {
+    background-color: #f53747;
 }
 
-.agendar_buttons.confirm:hover {
-    background-color: #2563eb; /* azul más oscuro */
+.detalleButtons.cancelar:hover {
+    background-color: #97353d; /* azul más oscuro */
 }
 
-.agendar_buttons.back {
+.detalleButtons.editar {
+    background-color: #2563eb;
+}
+
+.detalleButtons.editar:hover {
+    background-color: #2D2C84; /* azul más oscuro */
+}
+
+.detalleButtons.back {
     background-color: #E8510E;
 }
 
-.agendar_buttons.back:hover {
+.detalleButtons.back:hover {
     background-color: #ec7b4a; /* verde más oscuro */
-}
-
-/* Mensajes de error */
-.error-message {
-    color: red;
-    font-weight: bold;
-    font-size: 14px;
-    margin-top: 5px;
 }

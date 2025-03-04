@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import 'react-datepicker/dist/react-datepicker.css'; // Estilos del calendario
 //import { Link,useNavigate } from 'react-router-dom';
 //import axios from 'axios'; // Importa Axios
-import '../../css/consultarcita.css'; // Importa el archivo CSS
+import '../../css/consultarcita.module.css';
 
 function ConsultarCita() {
     const handleSubmit = async (e) => {

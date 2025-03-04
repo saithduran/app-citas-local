@@ -4,7 +4,7 @@ import Navbar from '../components/navbar';
 import DatePicker from 'react-datepicker';
 import { es } from "date-fns/locale";
 import 'react-datepicker/dist/react-datepicker.css';
-import '../../css/detallecita.css';
+import styles from '../../css/detallecita.module.css';
 import axios from 'axios';
 
 function DetalleCita() {
@@ -55,7 +55,6 @@ function DetalleCita() {
         return `${String(hora12).padStart(2, '0')}:${minutos} ${periodo}`;
     };
     
-
     const convertirHora12a24 = (hora12) => {
         const [hora, minutos, periodo] = hora12.match(/(\d+):(\d+) (\w+)/).slice(1);
         let hora24 = parseInt(hora, 10);
@@ -72,7 +71,7 @@ function DetalleCita() {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
                 });
-                console.log(response)
+                // console.log(response)
                 setCita(response.data);
                 setNombre(response.data.usuario.nombre);
                 setTutor(response.data.tutores.nombre_completo);
@@ -131,7 +130,6 @@ function DetalleCita() {
             console.error('Error al actualizar la cita', error);
         }
     };
-    
 
     const handleDelete = async () => {
         if (!window.confirm('¿Estás seguro de que quieres cancelar esta cita?')) return;
@@ -152,8 +150,8 @@ function DetalleCita() {
     return (
         <div>
             <Navbar user={user} />
-            <div className="detalle-container">
-                <div className="detalle-card">
+            <div className={styles.detalleContainer}>
+                <div className={styles.detalleCard}>
                     <h2 className="detalle-title">Detalles de la Cita</h2>
                     {mensajeExito && <div className="alerta-exito">{mensajeExito}</div>}
                     {error && <p className="error-message">{error}</p>}
@@ -175,8 +173,8 @@ function DetalleCita() {
                                     <option key={index} value={horario}>{horario}</option>
                                 ))}
                             </select>
-                            <button onClick={handleEdit} className="detalle_buttons editar m-2">Guardar</button>
-                            <button onClick={() => setEditando(false)} className="detalle_buttons cancelar mt-3">Volver</button>
+                            <button onClick={handleEdit} className={`${styles.detalleButtons} ${styles.editar}`}>Guardar</button>
+                            <button onClick={() => setEditando(false)} className={`${styles.detalleButtons} ${styles.cancelar}`}>Volver</button>
                         </div>
                     ) : (
                         <div>
@@ -185,10 +183,10 @@ function DetalleCita() {
                             <p><strong>Encargado:</strong> {cita?.tutores.nombre_completo}</p>
                             <p><strong>Hora:</strong> {cita?.hora ? convertirHora24a12(cita.hora) : ''}</p>
                             <p><strong>Celular:</strong> {cita?.usuario.celular}</p>
-                            <button onClick={() => setEditando(true)} className="detalle_buttons editar">Editar</button>
-                            <button onClick={handleDelete} className="detalle_buttons cancelar">Cancelar Cita</button>
+                            <button onClick={() => setEditando(true)} className={`${styles.detalleButtons} ${styles.editar}`}>Editar</button>
+                            <button onClick={handleDelete} className={`${styles.detalleButtons} ${styles.cancelar}`}>Cancelar Cita</button>
                             <Link to="/dashboard">
-                                <button className="detalle_buttons back">Volver al Inicio</button>
+                                <button className={`${styles.detalleButtons} ${styles.back}`}>Volver al Inicio</button>
                             </Link>
                         </div>
                     )}

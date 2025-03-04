@@ -8,17 +8,17 @@ import styles from '../../css/registrousuarios.module.css';
 const RegistroUsuarios = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
-    const [nombre, setNombre] = useState('');
-    const [celular, setCelular] = useState('');
+    const [nombreCompleto, setNombreCompleto] = useState('');
+    const [telefono, setTelefono] = useState('');
     const [direccion, setDireccion] = useState('');
     const [mensajeExito, setMensajeExito] = useState("");
     const [error, setError] = useState('');
     const [errorCelular, setErrorCelular] = useState('');
     const [enviando, setEnviando] = useState(false);
 
-    const validarCelular = (numero) => {
+    const validarCelular = (telefono) => {
         const regex = /^\d{10}$/;
-        return regex.test(numero);
+        return regex.test(telefono);
     };
 
     useEffect(() => {
@@ -47,12 +47,12 @@ const RegistroUsuarios = () => {
         setError('');
         setErrorCelular('');
 
-        if (!nombre || !celular || !direccion) {
+        if (!nombreCompleto || !telefono) {
             setError('Por favor, completa todos los campos.');
             return;
         }
 
-        if (!validarCelular(celular)) {
+        if (!validarCelular(telefono)) {
             setErrorCelular('Por favor, ingresa un número de celular válido (10 dígitos).');
             return;
         }
@@ -60,25 +60,24 @@ const RegistroUsuarios = () => {
         setEnviando(true);
 
         const datos = {
-            nombre: nombre,
-            celular: celular,
-            direccion: direccion
+            nombre_completo: nombreCompleto,
+            telefono: telefono,
         };
-
+        console.log(datos);
         try {
-            const response = await axios.post('http://localhost:8000/api/registrarusuarios', datos, {
+            const response = await axios.post('http://localhost:8000/api/registrartutor', datos, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            setMensajeExito(`✅ Usuario creado con éxito.`);
+            setMensajeExito(`✅ Encargado creado con éxito.`);
             setTimeout(() => {
                 setMensajeExito("");
                 navigate("/");
             }, 30000);
         } catch (error) {
-            console.error('Error al registrar el usuario:', error);
-            setError('Hubo un error al registrar usuario. Por favor, intenta nuevamente.');
+            console.error('Error al registrar el encargado:', error);
+            setError('Hubo un error al registrar encargado. Por favor, intenta nuevamente.');
         } finally {
             setEnviando(false);
         }
@@ -89,7 +88,7 @@ const RegistroUsuarios = () => {
         <Navbar user={user} />
         <div className={styles.agendarContainer}>
             <div className={styles.agendarCard}>
-                <h2 className={styles.tituloAgendar}>Registro de Usuarios</h2>
+                <h2 className={styles.tituloAgendar}>Registro de Encargado</h2>
                 {mensajeExito && <div className={styles.alertaExito}>{mensajeExito}</div>}
                 {error && <p className={styles.errorMessage}>{error}</p>}
                 {errorCelular && <p className={styles.errorMessage}>{errorCelular}</p>}
@@ -98,8 +97,8 @@ const RegistroUsuarios = () => {
                         <label>Nombre:</label>
                         <input
                             type="text"
-                            value={nombre}
-                            onChange={(e) => setNombre(e.target.value)}
+                            value={nombreCompleto}
+                            onChange={(e) => setNombreCompleto(e.target.value)}
                             placeholder="Ingresa tu nombre"
                             required
                             className={styles.inputField}
@@ -109,11 +108,11 @@ const RegistroUsuarios = () => {
                         <label>Número de celular:</label>
                         <input
                             type="tel"
-                            value={celular}
+                            value={telefono}
                             onChange={(e) => {
                                 const input = e.target.value;
                                 if (/^\d{0,10}$/.test(input)) {
-                                    setCelular(input);
+                                    setTelefono(input);
                                     setErrorCelular('');
                                 } else {
                                     setErrorCelular('Solo se permiten números y un máximo de 10 dígitos.');
@@ -121,17 +120,6 @@ const RegistroUsuarios = () => {
                             }}
                             placeholder="Ingresa tu número de celular"
                             maxLength={10}
-                            required
-                            className={styles.inputField}
-                        />
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label>Dirección:</label>
-                        <input
-                            type="text"
-                            value={direccion}
-                            onChange={(e) => setDireccion(e.target.value)}
-                            placeholder="Ingresa la Dirección"
                             required
                             className={styles.inputField}
                         />

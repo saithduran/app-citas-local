@@ -5,7 +5,7 @@ import axios from "axios";
 import styles from '../../css/listadousuarios.module.css';
 
 
-const ListadoUsuarios = () => {
+const ListadoTutores = () => {
     const [usuarios, setUsuarios] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -34,7 +34,7 @@ const ListadoUsuarios = () => {
         fetchUser();
         const fetchUsuarios = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/usuarios', {
+                const response = await axios.get('http://localhost:8000/api/tutores', {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
@@ -52,20 +52,19 @@ const ListadoUsuarios = () => {
 
     // Función para eliminar usuario
     const eliminarUsuario = async (id) => {
-        if (!window.confirm("¿Estás seguro de que deseas eliminar este usuario?")) {
+        if (!window.confirm("¿Estás seguro de que deseas eliminar este encargado?")) {
             return;
         }
 
         try {
-            await axios.delete(`http://localhost:8000/api/usuario/${id}`, { 
+            await axios.delete(`http://localhost:8000/api/tutores/${id}`, { 
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`
                 }
             });
             setUsuarios(usuarios.filter((usuario) => usuario.id !== id)); // Actualiza la lista sin el usuario eliminado
         } catch (error) {
-            console.error("Error al eliminar usuario:", error);
-            setError("No se pudo eliminar el usuario.");
+            setError("No se pudo eliminar el encargado.");
         }
     };
 
@@ -74,26 +73,24 @@ const ListadoUsuarios = () => {
             <Navbar user={user} />
             <div className={styles.tutoresContainer}>
                 <div className={styles.tutoresCard}>
-                    <h2>Listado de Usuarios</h2>
+                    <h2>Listado de Encargados</h2>
                     {error && <p className="error-message">{error}</p>}
                     {loading ? (
-                        <p>Cargando usuarios...</p>
+                        <p>Cargando encargados...</p>
                     ) : (
                         <table className={styles.userTable}>
                             <thead>
                                 <tr>
                                     <th>Nombre</th>
-                                    <th>Celular</th>
-                                    <th>Dirección</th>
+                                    <th>Telefono</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {usuarios.map((usuario) => (
                                     <tr key={usuario.id}>
-                                        <td ><Link to={`/historial/${usuario.id}`}>{usuario.nombre}</Link></td>
-                                        <td>{usuario.celular}</td>
-                                        <td>{usuario.direccion}</td>
+                                        <td>{usuario.nombre_completo}</td>
+                                        <td>{usuario.telefono}</td>
                                         <td>
                                             {/* <Link to={`/editarusuario/${usuario.id}`} className={styles.BtnEdit}>Editar</Link> */}
                                             <button onClick={() => eliminarUsuario(usuario.id)} className={styles.BtnDelete}>Eliminar</button>
@@ -109,4 +106,4 @@ const ListadoUsuarios = () => {
     );
 };
 
-export default ListadoUsuarios;
+export default ListadoTutores;
