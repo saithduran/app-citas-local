@@ -3,6 +3,9 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../../css/login.css';
 
+// Configurar Axios para enviar credenciales en todas las solicitudes
+axios.defaults.withCredentials = true;
+
 function Login() {
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
@@ -14,19 +17,23 @@ function Login() {
         setError('');
 
         try {
-            // Autenticación con Laravel Sanctum
-            await axios.get('http://localhost:8000/sanctum/csrf-cookie'); // Obtener la cookie CSRF
+            // Obtener la cookie CSRF antes de enviar credenciales
+            
+            await axios.get('http://localhost:8000/sanctum/csrf-cookie');
+
+            // Enviar credenciales con withCredentials: true
             const response = await axios.post('http://localhost:8000/api/login', {
                 username,
                 password
-            });
+            }, { withCredentials: true });
 
             localStorage.setItem('token', response.data.token); // Guardar el token en localStorage
 
             // Redirigir al dashboard de citas
             navigate('/dashboard');
         } catch (error) {
-            setError('Credenciales incorrectas. Intenta de nuevo.');
+            console.error('Error de autenticación:', error.response);
+            setError(error.response?.data?.message || 'Credenciales incorrectas. Intenta de nuevo.');
         }
     };
 
@@ -39,7 +46,7 @@ function Login() {
                 {error && <p className="error-message">{error}</p>}
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label>Usario:</label>
+                        <label>Usuario:</label>
                         <input
                             type="text"
                             value={username}

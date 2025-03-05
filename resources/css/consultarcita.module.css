@@ -4,16 +4,22 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
+    min-height: 91vh;
     background-color: #f3f4f6; /* gris claro */
     padding: 1rem;
 }
 
-/* Ajuste responsivo para pantallas más pequeñas */
-@media (max-width: 768px) {
+/* Ajuste responsivo para pantallas más graandes*/
+@media (min-width: 1900px) {
     .consultar-container {
-        max-width: 100%;
-        padding: 15px;
+        min-height: 91vh !important;
+    }
+}
+
+/* Ajuste responsivo para pantallas más graandes*/
+@media (min-width: 1441px) and (max-width: 1800px) {
+    .consultar-container {
+        min-height: 88vh;
     }
 }
 

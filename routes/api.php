@@ -22,6 +22,7 @@ Route::get('/cita/{codigo}', [CitaController::class, 'show']);
 Route::put('/cita/{codigo}', [CitaController::class, 'update'])->middleware('auth:sanctum');
 Route::delete('/cita/{codigo}', [CitaController::class, 'destroy'])->middleware('auth:sanctum');
 Route::get('/citas', [CitaController::class, 'index'])->middleware('auth:sanctum');
+Route::get('/usuariocitas/{id}', [CitaController::class, 'usuarioCitas']);
 //Usuarios
 Route::post('/registrarusuarios', [UsuarioController::class, 'store'])->middleware('auth:sanctum');
 Route::get('/usuarios', [UsuarioController::class, 'index'])->middleware('auth:sanctum');

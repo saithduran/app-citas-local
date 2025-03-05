@@ -40,6 +40,16 @@ class UsuarioController extends Controller
         return response()->json($usuario);
     }
 
+    public function citas($id){
+        $usuario = Usuarios::select('id','nombre', 'celular', 'direccion')->where('id', $id)->first();
+        
+        if (!$usuario) {
+            return response()->json(['mensaje' => 'Usuario no encontrada'], 404);
+        }
+    
+        return response()->json($usuario);
+    }
+
     // Actualizar una cita
     public function update(Request $request, $id){
     

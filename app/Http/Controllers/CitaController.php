@@ -82,6 +82,12 @@ class CitaController extends Controller
         return response()->json($cita);
     }
 
+    public function usuarioCitas($id){
+        $usuarioCitas = Cita::with(['usuario', 'tutores'])->where('usuario_id', $id)->get();
+    
+        return response()->json($usuarioCitas);
+    }
+
     public function show($codigo){
         $cita = Cita::with(['usuario', 'tutores'])->where('codigo', $codigo)->first();
     
@@ -94,28 +100,21 @@ class CitaController extends Controller
 
     // Actualizar una cita
     public function update(Request $request, $codigo){
-        
+
         $cita = Cita::where('codigo', $codigo)->first();
 
         if (!$cita) {
             return response()->json(['mensaje' => 'Cita no encontrada'], 404);
         }
 
-        $request->validate([
-            'fecha' => 'required|date',
-            // 'celular' => 'required|string|max:10',
-            'hora' => 'required',
-            // 'nombre' => 'required|string|max:255',
-        ]);
-
         $cita->update([
+            'usuario_id' => $request->usuario_id,
+            'tutor_id' => $request->tutor_id,
             'fecha' => $request->fecha,
             'hora' => $request->hora,
-            // 'nombre' => $request->nombre,
-            // 'celular' => $request->celular
         ]);
-
-        return response()->json(['mensaje' => 'Cita actualizada con éxito']);
+        
+        return response()->json(['mensaje' => 'Cita actualizada con éxito','datos' => $request->all()]);
     }
 
     // Eliminar una cita

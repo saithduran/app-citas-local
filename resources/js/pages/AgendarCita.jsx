@@ -43,9 +43,41 @@ function AgendarCita() {
                 }
             }
         };
-
         fetchUser();
-    }, [navigate]);
+
+        const obtenerUsuarios = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/api/usuarios', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                setUsuarios(response.data);
+            } catch (error) {
+                setError("Error al obtener usuarios.");
+                console.error("Error:", error);
+            }
+        };
+        obtenerUsuarios();
+
+        const obtenerTutores = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/api/tutores', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                setTutores(response.data);
+            } catch (error) {
+                setError("Error al obtener usuarios.");
+                console.error("Error:", error);
+            }
+        };
+        obtenerTutores();
+
+        const fechaFormateada = selectedDate.toISOString().split('T')[0];
+        obtenerHorariosDisponibles(fechaFormateada);
+    }, [navigate,selectedDate]);
 
     const convertirHora24a12 = (hora24) => {
         const [hora, minutos] = hora24.split(':');
@@ -91,37 +123,6 @@ function AgendarCita() {
         }
     };
 
-    useEffect(() => {
-        const obtenerUsuarios = async () => {
-            try {
-                const response = await axios.get('http://localhost:8000/api/usuarios', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-                setUsuarios(response.data);
-            } catch (error) {
-                setError("Error al obtener usuarios.");
-                console.error("Error:", error);
-            }
-        };
-        obtenerUsuarios();
-        const obtenerTutores = async () => {
-            try {
-                const response = await axios.get('http://localhost:8000/api/tutores', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-                setTutores(response.data);
-            } catch (error) {
-                setError("Error al obtener usuarios.");
-                console.error("Error:", error);
-            }
-        };
-        obtenerTutores();
-    }, []);
-
     const handleSeleccionUsuario = (selectedOption) => {
         setNombre(selectedOption.label);
         setCelular(selectedOption.value);
@@ -132,11 +133,6 @@ function AgendarCita() {
         setNombreTutor(selectedOption.label);
         setIdTutor(selectedOption.idTutor);
     };
-
-    useEffect(() => {
-        const fechaFormateada = selectedDate.toISOString().split('T')[0];
-        obtenerHorariosDisponibles(fechaFormateada);
-    }, [selectedDate]);
 
     const validarCelular = (numero) => {
         const regex = /^\d{10}$/;
@@ -194,7 +190,7 @@ function AgendarCita() {
             <Navbar user={user} />
             <div className={styles.agendarContainer}>
                 <div className={styles.agendarCard}>
-                    <img src="/logo3.png" alt="Logo Ministerio Altar Del Santisimo" className={styles.homeLogo} />
+                    {/* <img src="/logo3.png" alt="Logo Ministerio Altar Del Santisimo" className={styles.homeLogo} /> */}
                     <h1 className={styles.agendarTitulo}>Agendar Cita</h1>
                     {mensajeExito && <div className="alerta-exito">{mensajeExito}</div>}
                     {error && <p className={styles.errorMessage}>{error}</p>}

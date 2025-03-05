@@ -5,6 +5,7 @@ import DatePicker from 'react-datepicker';
 import { es } from "date-fns/locale";
 import 'react-datepicker/dist/react-datepicker.css';
 import styles from '../../css/detallecita.module.css';
+import Select from 'react-select'; // Para autocompletado de nombres
 import axios from 'axios';
 
 function DetalleCita() {
@@ -14,9 +15,13 @@ function DetalleCita() {
     const [editando, setEditando] = useState(false);
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedTime, setSelectedTime] = useState('');
-    const [nombre, setNombre] = useState('');
+    const [selectedUsuario, setSelectedUsuario] = useState(null); // Estado para el tutor seleccionado
+    const [usuarios, setUsuarios] = useState([]);
+    const [idUsuario, setIdUsuario] = useState('');
     const [celular, setCelular] = useState('');
-    const [tutor, setTutor] = useState('');
+    const [selectedTutor, setSelectedTutor] = useState(null); // Estado para el tutor seleccionado
+    const [idTutor, setIdTutor] = useState('');
+    const [tutores, setTutores] = useState([]);
     const [horariosDisponibles, setHorariosDisponibles] = useState([]);
     const [mensajeExito, setMensajeExito] = useState("");
     const [error, setError] = useState('');
@@ -41,9 +46,93 @@ function DetalleCita() {
                 }
             }
         };
-
         fetchUser();
+
+        const obtenerUsuarios = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/api/usuarios', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                setUsuarios(response.data);
+            } catch (error) {
+                setError("Error al obtener usuarios.");
+                console.error("Error:", error);
+            }
+        };
+        obtenerUsuarios();
+
+        const obtenerTutores = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/api/tutores', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                setTutores(response.data);
+            } catch (error) {
+                setError("Error al obtener usuarios.");
+                console.error("Error:", error);
+            }
+        };
+        obtenerTutores();
     }, [navigate]);
+
+    //obtener detalles de la cita y capturarlos
+    useEffect(() => {
+        const fetchCita = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8000/api/cita/${codigo}`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                //console.log(response.data);
+                setCita(response.data);
+                setSelectedDate(response.data.fecha ? new Date(response.data.fecha + "T00:00:00") : new Date());
+                setSelectedTime(convertirHora24a12(response.data.hora));
+    
+                // Establece el valor inicial del Select
+                if (response.data.tutores) {
+                    setSelectedTutor({
+                        label: response.data.tutores.nombre_completo,
+                        value: response.data.tutores.id
+                    });
+                }
+                // Establece el valor inicial del Select
+                console.log(response.data);
+                if (response.data.usuario) {
+                    setSelectedUsuario({
+                        label: response.data.usuario.nombre,
+                        celular: response.data.usuario.celular,
+                        value: response.data.usuario.id
+                    });
+                }
+            } catch (error) {
+                console.error('Error al obtener los detalles de la cita', error);
+            }
+        };
+        fetchCita();
+    }, [codigo]);
+
+    //obtener los horarios y capturarlos
+    useEffect(() => {
+        if (!selectedDate) return;
+        const fechaISO = selectedDate.toISOString().split('T')[0];
+    
+        const obtenerHorariosDisponibles = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8000/api/horarios-disponibles/${fechaISO}`);
+                if (Array.isArray(response.data)) {
+                    setHorariosDisponibles(response.data.map(convertirHora24a12));
+                }
+            } catch (error) {
+                console.error('Error al obtener horarios disponibles', error);
+            }
+        };
+        obtenerHorariosDisponibles();
+    }, [selectedDate]);   
 
     const convertirHora24a12 = (hora24) => {
         if (!hora24) return "";
@@ -61,80 +150,65 @@ function DetalleCita() {
         if (periodo === 'PM' && hora24 !== 12) hora24 += 12;
         if (periodo === 'AM' && hora24 === 12) hora24 = 0;
         return `${String(hora24).padStart(2, '0')}:${minutos}`;
+    }; 
+
+    const handleSeleccionUsuario = (selectedOption) => {
+        setSelectedUsuario(selectedOption);
+        setCelular(selectedOption.celular);
+        setIdUsuario(selectedOption.value);
     };
 
-    useEffect(() => {
-        const fetchCita = async () => {
-            try {
-                const response = await axios.get(`http://localhost:8000/api/cita/${codigo}`,{
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-                // console.log(response)
-                setCita(response.data);
-                setNombre(response.data.usuario.nombre);
-                setTutor(response.data.tutores.nombre_completo);
-                setCelular(response.data.usuario.celular);
-                setSelectedDate(response.data.fecha ? new Date(response.data.fecha + "T00:00:00") : new Date());
-                setSelectedTime(convertirHora24a12(response.data.hora));
-            } catch (error) {
-                console.error('Error al obtener los detalles de la cita', error);
-            }
-        };
-        fetchCita();
-    }, [codigo]);
-
-    useEffect(() => {
-        if (!selectedDate) return;
-        const fechaISO = selectedDate.toISOString().split('T')[0];
-    
-        const obtenerHorariosDisponibles = async () => {
-            try {
-                const response = await axios.get(`http://localhost:8000/api/horarios-disponibles/${fechaISO}`);
-                if (Array.isArray(response.data)) {
-                    setHorariosDisponibles(response.data.map(convertirHora24a12));
-                }
-            } catch (error) {
-                console.error('Error al obtener horarios disponibles', error);
-            }
-        };
-    
-        obtenerHorariosDisponibles();
-    }, [selectedDate]);    
+    const handleSeleccionTutor = (selectedOption) => {
+        setSelectedTutor(selectedOption); // Guarda el tutor seleccionado
+        setIdTutor(selectedOption.value); // Guarda el ID del tutor
+    };
 
     const handleEdit = async () => {
-        if (!selectedTime || !selectedDate) {
-            setError('Por favor, completa todos los campos.');
-            return;
-        }
+        // Datos que se enviarán en la solicitud
+        const datos = {
+            usuario_id: selectedUsuario.value,
+            tutor_id: selectedTutor.value,
+            fecha: selectedDate.toISOString().split('T')[0],
+            hora: convertirHora12a24(selectedTime),
+        };
+    
+        // Imprimir los datos en la consola
+        console.log("Datos enviados:", datos);
+    
         try {
-            await axios.put(`http://localhost:8000/api/cita/${codigo}`, 
+            // Realizar la solicitud PUT
+            const response = await axios.put(
+                `http://localhost:8000/api/cita/${codigo}`,
+                datos,
                 {
-                // nombre,
-                // celular,
-                fecha: selectedDate.toISOString().split('T')[0],
-                hora: convertirHora12a24(selectedTime),
-                }, 
-                { // Aquí se pasa la configuración con el header Authorization
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
                 }
             );
     
+            // Imprimir la respuesta del servidor
+            console.log("Respuesta del servidor:", response.data);
+    
+            // Actualizar el estado de la cita
             setCita({
                 ...cita,
-                // nombre,
-                // celular,
+                usuario_id: selectedUsuario.value,
+                tutor_id: selectedTutor.value,
                 fecha: selectedDate.toISOString().split('T')[0],
                 hora: convertirHora12a24(selectedTime),
             });
     
+            // Mostrar mensaje de éxito
             setMensajeExito('✅ Cita actualizada con éxito.');
             setEditando(false);
         } catch (error) {
             console.error('Error al actualizar la cita', error);
+    
+            // Imprimir el error en la consola
+            if (error.response) {
+                console.error("Respuesta de error del servidor:", error.response.data);
+            }
         }
     };
 
@@ -166,11 +240,30 @@ function DetalleCita() {
                     {editando ? (
                         <div>
                             <label className='mt-3'>Nombre:</label>
-                            <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} disabled/>
+                            <Select
+                                options={usuarios.map(user => ({ 
+                                    label: user.nombre, 
+                                    celular: user.celular, 
+                                    value: user.id 
+                                }))}
+                                onChange={handleSeleccionUsuario}
+                                placeholder="Ingresa o selecciona un nombre"
+                                className="input-field"
+                                value={selectedUsuario}
+                            />
                             <label className='mt-3'>Celular:</label>
                             <input type="tel" value={celular} onChange={(e) => setCelular(e.target.value)} className="input-field" maxLength={10} disabled/>
                             <label className='mt-3'>Encargado:</label>
-                            <input type="text" value={tutor} onChange={(e) => setTutor(e.target.value)} disabled/>
+                            <Select
+                                options={tutores.map(tutor => ({
+                                    label: tutor.nombre_completo,
+                                    value: tutor.id // Usa "value" en lugar de "idTutor"
+                                }))}
+                                onChange={handleSeleccionTutor}
+                                placeholder="Ingresa o selecciona un nombre"
+                                className="input-field"
+                                value={selectedTutor} // Pasa el objeto seleccionado
+                            />
                             <label className='mt-3'>Fecha:</label>
                             <DatePicker selected={selectedDate} onChange={setSelectedDate} dateFormat="dd/MM/yyyy" minDate={new Date()} locale={es} className="input-field"/>
                             <label className='mt-3'>Hora:</label>
@@ -186,10 +279,10 @@ function DetalleCita() {
                     ) : (
                         <div>
                             <p><strong>Nombre:</strong> {cita?.usuario.nombre}</p>
-                            <p><strong>Fecha:</strong> {cita?.fecha}</p>
-                            <p><strong>Encargado:</strong> {cita?.tutores.nombre_completo}</p>
-                            <p><strong>Hora:</strong> {cita?.hora ? convertirHora24a12(cita.hora) : ''}</p>
                             <p><strong>Celular:</strong> {cita?.usuario.celular}</p>
+                            <p><strong>Encargado:</strong> {cita?.tutores.nombre_completo}</p>
+                            <p><strong>Fecha:</strong> {cita?.fecha}</p>
+                            <p><strong>Hora:</strong> {cita?.hora ? convertirHora24a12(cita.hora) : ''}</p>
                             <button onClick={() => setEditando(true)} className={`${styles.detalleButtons} ${styles.editar}`}>Editar</button>
                             <button onClick={handleDelete} className={`${styles.detalleButtons} ${styles.cancelar}`}>Cancelar Cita</button>
                             <Link to="/dashboard">

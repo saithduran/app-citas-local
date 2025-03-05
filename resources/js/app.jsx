@@ -11,6 +11,7 @@ import RegistroUsuarios from './pages/RegistroUsuarios';
 import ListadoUsuarios from './pages/ListadoUsuarios';
 import RegistroTutores from './pages/RegistroTutores';
 import ListadoTutores from './pages/ListadoTutores';
+import HistorialUsuario from './pages/HistorialUsuario';
 // import '../css/app.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -33,6 +34,7 @@ function App() {
                 <Route path="/registrotutores" element={<PrivateRoute><RegistroTutores /></PrivateRoute>} />
                 <Route path="/listadousuarios" element={<PrivateRoute><ListadoUsuarios /></PrivateRoute>} />
                 <Route path="/listadotutores" element={<PrivateRoute><ListadoTutores /></PrivateRoute>} />
+                <Route path="/historial/:idUsuario" element={<PrivateRoute><HistorialUsuario /></PrivateRoute>} />
             </Routes>
         </Router>
     );
