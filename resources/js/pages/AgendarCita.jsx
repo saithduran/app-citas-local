@@ -171,10 +171,6 @@ function AgendarCita() {
             });
             const codigoCita = response.data.codigo;
             setMensajeExito(`✅ Cita creada con éxito. Tu código es: ${codigoCita}. Guardalo para consultar tu cita si quieres cancelarla o modificarla después.`);
-            setTimeout(() => {
-                setMensajeExito("");
-                navigate("/");
-            }, 30000);
             const fechaFormateada = selectedDate.toISOString().split('T')[0];
             await obtenerHorariosDisponibles(fechaFormateada);
         } catch (error) {

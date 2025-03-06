@@ -15,6 +15,8 @@ import HistorialUsuario from './pages/HistorialUsuario';
 // import '../css/app.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+
+
 const PrivateRoute = ({ children }) => {
     const token = localStorage.getItem('token');
     return token ? children : <Navigate to="/login" />;
@@ -24,7 +26,7 @@ function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<Login />} />
+                <Route path="*" element={<Navigate to="/login" replace />} />
                 <Route path="/agendarcita" element={<PrivateRoute><AgendarCita /></PrivateRoute>} />
                 <Route path="/consultarcita" element={<PrivateRoute><ConsultarCita /></PrivateRoute>} />
                 <Route path="/login" element={<Login />} />

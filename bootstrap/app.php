@@ -16,6 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'sanctum' => EnsureFrontendRequestsAreStateful::class,
         ]);
+    
+        // Aplica autenticación globalmente en API
+        $middleware->group('api', ['auth:sanctum']);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
