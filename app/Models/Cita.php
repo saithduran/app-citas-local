@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 class Cita extends Model
 {
     protected $fillable = [
-        'usuario_id', 'fecha', 'hora','tutor_id'
+        'usuario_id', 'tutor_id', 'fecha', 'hora', 'observaciones','estado'
     ];
 
     public function usuario() {
@@ -19,6 +19,14 @@ class Cita extends Model
         return $this->belongsTo(Tutores::class, 'tutor_id');
     }
 
+    public function actualizarEstado($nuevoEstado, $observaciones = null) {
+        $this->estado = $nuevoEstado;
+        if ($observaciones) {
+            $this->observaciones = $observaciones;
+        }
+        $this->save();
+    }
+    
     /**
      * Generar un código único para la cita
      */

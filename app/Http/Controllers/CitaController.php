@@ -36,9 +36,9 @@ class CitaController extends Controller
     }
 
     // Obtener todas las citas para mostrarlas en el calendario
-    public function index()
-    {
-        $citas = Cita::with('usuario')->get(); // Cargamos el usuario asociado a cada cita
+    public function index(){
+        $citas = Cita::where('estado','pendiente')
+                    ->with('usuario')->get(); // Cargamos el usuario asociado a cada cita
     
         $eventos = $citas->map(function ($cita) {
             return [
@@ -54,8 +54,7 @@ class CitaController extends Controller
     }
 
     // Obtener los horarios disponibles para una fecha
-    public function getHorariosDisponibles($fecha)
-    {
+    public function getHorariosDisponibles($fecha){
         // Obtener los horarios ocupados para la fecha dada
         $horariosOcupados = Cita::where('fecha', $fecha)->pluck('hora')->toArray();
 
@@ -80,12 +79,6 @@ class CitaController extends Controller
         }
     
         return response()->json($cita);
-    }
-
-    public function usuarioCitas($id){
-        $usuarioCitas = Cita::with(['usuario', 'tutores'])->where('usuario_id', $id)->get();
-    
-        return response()->json($usuarioCitas);
     }
 
     public function show($codigo){
@@ -126,9 +119,28 @@ class CitaController extends Controller
             return response()->json(['mensaje' => 'Cita no encontrada'], 404);
         }
 
-        $cita->delete();
+        $cita->update([
+            'hora' => '00:00:00',
+            'estado' => 'cancelada',
+            'observaciones' => 'Cita cancelada'
+        ]);
+
         return response()->json(['mensaje' => 'Cita cancelada con éxito']);
     }
 
+    //Citas organizadas por usuario
+    public function usuarioCitas($id){
+        $usuarioCitas = Cita::with(['usuario', 'tutores'])->where('usuario_id', $id)->get();
     
+        return response()->json($usuarioCitas);
+    }
+
+    public function actualizarEstado(Request $request, $codigo){
+        $cita = Cita::where('codigo', $codigo)->first();
+
+        $cita->actualizarEstado($request->estado, $request->observaciones);
+
+        return response()->json(['message' => 'Cita actualizada con éxito']);
+    }
+
 }

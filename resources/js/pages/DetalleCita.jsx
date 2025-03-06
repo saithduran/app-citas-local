@@ -13,20 +13,21 @@ function DetalleCita() {
     const navigate = useNavigate();
     const [cita, setCita] = useState(null);
     const [editando, setEditando] = useState(false);
+    const [desarrollando, setDesarrollando] = useState(false); // Nuevo estado
+    const [observaciones, setObservaciones] = useState(''); // Nuevo estado
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedTime, setSelectedTime] = useState('');
-    const [selectedUsuario, setSelectedUsuario] = useState(null); // Estado para el tutor seleccionado
+    const [selectedUsuario, setSelectedUsuario] = useState(null);
     const [usuarios, setUsuarios] = useState([]);
     const [idUsuario, setIdUsuario] = useState('');
     const [celular, setCelular] = useState('');
-    const [selectedTutor, setSelectedTutor] = useState(null); // Estado para el tutor seleccionado
+    const [selectedTutor, setSelectedTutor] = useState(null);
     const [idTutor, setIdTutor] = useState('');
     const [tutores, setTutores] = useState([]);
     const [horariosDisponibles, setHorariosDisponibles] = useState([]);
     const [mensajeExito, setMensajeExito] = useState("");
     const [error, setError] = useState('');
     const [errorCelular, setErrorCelular] = useState('');
-    //Capturar usuario para dshboard
     const [user, setUser] = useState(null);
 
     useEffect(() => {
@@ -79,7 +80,7 @@ function DetalleCita() {
         obtenerTutores();
     }, [navigate]);
 
-    //obtener detalles de la cita y capturarlos
+    // Obtener detalles de la cita
     useEffect(() => {
         const fetchCita = async () => {
             try {
@@ -88,20 +89,17 @@ function DetalleCita() {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
                 });
-                //console.log(response.data);
                 setCita(response.data);
                 setSelectedDate(response.data.fecha ? new Date(response.data.fecha + "T00:00:00") : new Date());
                 setSelectedTime(convertirHora24a12(response.data.hora));
-    
-                // Establece el valor inicial del Select
+
                 if (response.data.tutores) {
                     setSelectedTutor({
                         label: response.data.tutores.nombre_completo,
                         value: response.data.tutores.id
                     });
                 }
-                // Establece el valor inicial del Select
-                console.log(response.data);
+
                 if (response.data.usuario) {
                     setSelectedUsuario({
                         label: response.data.usuario.nombre,
@@ -116,14 +114,18 @@ function DetalleCita() {
         fetchCita();
     }, [codigo]);
 
-    //obtener los horarios y capturarlos
+    // Obtener horarios disponibles
     useEffect(() => {
         if (!selectedDate) return;
         const fechaISO = selectedDate.toISOString().split('T')[0];
-    
+
         const obtenerHorariosDisponibles = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/api/horarios-disponibles/${fechaISO}`);
+                const response = await axios.get(`http://localhost:8000/api/horariosDisponibles/${fechaISO}`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
                 if (Array.isArray(response.data)) {
                     setHorariosDisponibles(response.data.map(convertirHora24a12));
                 }
@@ -132,25 +134,25 @@ function DetalleCita() {
             }
         };
         obtenerHorariosDisponibles();
-    }, [selectedDate]);   
+    }, [selectedDate]);
 
     const convertirHora24a12 = (hora24) => {
         if (!hora24) return "";
-        const [hora, minutos] = hora24.split(':'); // Ignoramos segundos si existen
+        const [hora, minutos] = hora24.split(':');
         let hora12 = parseInt(hora, 10);
         const periodo = hora12 >= 12 ? 'PM' : 'AM';
         if (hora12 > 12) hora12 -= 12;
         if (hora12 === 0) hora12 = 12;
         return `${String(hora12).padStart(2, '0')}:${minutos} ${periodo}`;
     };
-    
+
     const convertirHora12a24 = (hora12) => {
         const [hora, minutos, periodo] = hora12.match(/(\d+):(\d+) (\w+)/).slice(1);
         let hora24 = parseInt(hora, 10);
         if (periodo === 'PM' && hora24 !== 12) hora24 += 12;
         if (periodo === 'AM' && hora24 === 12) hora24 = 0;
         return `${String(hora24).padStart(2, '0')}:${minutos}`;
-    }; 
+    };
 
     const handleSeleccionUsuario = (selectedOption) => {
         setSelectedUsuario(selectedOption);
@@ -159,38 +161,27 @@ function DetalleCita() {
     };
 
     const handleSeleccionTutor = (selectedOption) => {
-        setSelectedTutor(selectedOption); // Guarda el tutor seleccionado
-        setIdTutor(selectedOption.value); // Guarda el ID del tutor
+        setSelectedTutor(selectedOption);
+        setIdTutor(selectedOption.value);
     };
 
     const handleEdit = async () => {
-        // Datos que se enviarán en la solicitud
         const datos = {
             usuario_id: selectedUsuario.value,
             tutor_id: selectedTutor.value,
             fecha: selectedDate.toISOString().split('T')[0],
             hora: convertirHora12a24(selectedTime),
         };
-    
-        // Imprimir los datos en la consola
-        console.log("Datos enviados:", datos);
-    
+
         try {
-            // Realizar la solicitud PUT
             const response = await axios.put(
-                `http://localhost:8000/api/cita/${codigo}`,
-                datos,
-                {
+                `http://localhost:8000/api/cita/${codigo}`,datos,{
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
                 }
             );
-    
-            // Imprimir la respuesta del servidor
-            console.log("Respuesta del servidor:", response.data);
-    
-            // Actualizar el estado de la cita
+
             setCita({
                 ...cita,
                 usuario_id: selectedUsuario.value,
@@ -198,14 +189,11 @@ function DetalleCita() {
                 fecha: selectedDate.toISOString().split('T')[0],
                 hora: convertirHora12a24(selectedTime),
             });
-    
-            // Mostrar mensaje de éxito
+
             setMensajeExito('✅ Cita actualizada con éxito.');
             setEditando(false);
         } catch (error) {
             console.error('Error al actualizar la cita', error);
-    
-            // Imprimir el error en la consola
             if (error.response) {
                 console.error("Respuesta de error del servidor:", error.response.data);
             }
@@ -222,9 +210,45 @@ function DetalleCita() {
                 }
             });
             alert('Cita cancelada con éxito');
-            navigate('/dashboard'); // Redirige al calendario después de cancelar
+            navigate('/dashboard');
         } catch (error) {
             console.error('Error al cancelar la cita', error);
+        }
+    };
+
+    const handleDesarrollar = async () => {
+        if (!observaciones) {
+            alert('Por favor, ingresa las observaciones.');
+            return;
+        }
+
+        try {
+            const response = await axios.put(
+                `http://localhost:8000/api/citaDesarrollo/${codigo}`,
+                {
+                    estado: 'Finalizada',
+                    observaciones: observaciones,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
+                }
+            );
+
+            setCita({
+                ...cita,
+                estado: 'Finalizada',
+                observaciones: observaciones,
+            });
+
+            setMensajeExito('✅ Cita desarrollada.');
+            setDesarrollando(false);
+        } catch (error) {
+            console.error('Error al actualizar la cita', error);
+            if (error.response) {
+                console.error('Respuesta de error del servidor:', error.response.data);
+            }
         }
     };
 
@@ -257,12 +281,12 @@ function DetalleCita() {
                             <Select
                                 options={tutores.map(tutor => ({
                                     label: tutor.nombre_completo,
-                                    value: tutor.id // Usa "value" en lugar de "idTutor"
+                                    value: tutor.id
                                 }))}
                                 onChange={handleSeleccionTutor}
                                 placeholder="Ingresa o selecciona un nombre"
                                 className="input-field"
-                                value={selectedTutor} // Pasa el objeto seleccionado
+                                value={selectedTutor}
                             />
                             <label className='mt-3'>Fecha:</label>
                             <DatePicker selected={selectedDate} onChange={setSelectedDate} dateFormat="dd/MM/yyyy" minDate={new Date()} locale={es} className="input-field"/>
@@ -283,11 +307,54 @@ function DetalleCita() {
                             <p><strong>Encargado:</strong> {cita?.tutores.nombre_completo}</p>
                             <p><strong>Fecha:</strong> {cita?.fecha}</p>
                             <p><strong>Hora:</strong> {cita?.hora ? convertirHora24a12(cita.hora) : ''}</p>
-                            <button onClick={() => setEditando(true)} className={`${styles.detalleButtons} ${styles.editar}`}>Editar</button>
-                            <button onClick={handleDelete} className={`${styles.detalleButtons} ${styles.cancelar}`}>Cancelar Cita</button>
+                            <p><strong>Estado:</strong> {cita?.estado}</p>
+
+                            {/* Botón de Editar */}
+                            {cita?.estado !== 'Cancelada' && cita?.estado !== 'Finalizada' && (
+                                <button onClick={() => setEditando(true)} className={`${styles.detalleButtons} ${styles.editar}`}>
+                                    Editar
+                                </button>
+                            )}
+
+                            {/* Botón de Cancelar Cita */}
+                            {cita?.estado !== 'Cancelada' && cita?.estado !== 'Finalizada' && (
+                                <button onClick={handleDelete} className={`${styles.detalleButtons} ${styles.cancelar}`}>
+                                    Cancelar Cita
+                                </button>
+                            )}
+
+                            {/* Botón de Iniciar Desarrollo */}
+                            {cita?.estado === 'Pendiente' && (
+                                <button
+                                    onClick={() => setDesarrollando(true)}
+                                    className={`${styles.detalleButtons} ${styles.desarrollar}`}
+                                >
+                                    Iniciar Desarrollo
+                                </button>
+                            )}
+
+                            {/* Botón de Volver al Inicio */}
                             <Link to="/dashboard">
                                 <button className={`${styles.detalleButtons} ${styles.back}`}>Volver al Inicio</button>
                             </Link>
+                        </div>
+                    )}
+
+                    {desarrollando && (
+                        <div>
+                            <label className='mt-3'>Observaciones:</label>
+                            <textarea
+                                value={observaciones}
+                                onChange={(e) => setObservaciones(e.target.value)}
+                                className="input-field"
+                                placeholder="Escribe las observaciones aquí"
+                            />
+                            <button onClick={handleDesarrollar} className={`${styles.detalleButtons} ${styles.guardar}`}>
+                                Guardar Observaciones
+                            </button>
+                            <button onClick={() => setDesarrollando(false)} className={`${styles.detalleButtons} ${styles.cancelar}`}>
+                                Cancelar
+                            </button>
                         </div>
                     )}
                 </div>

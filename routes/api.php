@@ -38,5 +38,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/tutor/{id}', [TutorController::class, 'destroy']);
     //Rutas para agendamieto de citas
     Route::post('/agendarcitas', [CitaController::class, 'store']);
-    Route::get('/horarios-disponibles/{fecha}', [CitaController::class, 'getHorariosDisponibles']);
+    Route::get('/horariosDisponibles/{fecha}', [CitaController::class, 'getHorariosDisponibles']);
+    Route::put('/citaDesarrollo/{codigo}', [CitaController::class, 'actualizarEstado']);
 });

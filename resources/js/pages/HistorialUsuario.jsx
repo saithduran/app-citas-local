@@ -3,17 +3,20 @@ import Navbar from '../components/navbar';
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import styles from '../../css/listadousuarios.module.css';
+import CitaModal from '../components/ModalCitaHisstorial'; // Importa el modal
 
 const HistorialUsuario = () => {
     const { idUsuario } = useParams();
     const [usuarioCitas, setUsuarioCitas] = useState([]);
-    const [tutores, setTutores] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [user, setUser] = useState(null);
+    const [selectedCita, setSelectedCita] = useState(null); // Estado para la cita seleccionada
+    const [showModal, setShowModal] = useState(false); // Estado para controlar la visibilidad del modal
 
     // Obtener la lista de usuarios
     useEffect(() => {
+
         const fetchUser = async () => {
             try {
                 const response = await axios.get('http://localhost:8000/api/user', {
@@ -30,7 +33,6 @@ const HistorialUsuario = () => {
                 }
             }
         };
-
         fetchUser();
 
         const fetchCitasUsuario = async () => {
@@ -51,20 +53,6 @@ const HistorialUsuario = () => {
         };
         fetchCitasUsuario();
 
-        const obtenerTutores = async () => {
-            try {
-                const response = await axios.get('http://localhost:8000/api/tutores', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-                setTutores(response.data);
-            } catch (error) {
-                setError("Error al obtener usuarios.");
-                console.error("Error:", error);
-            }
-        };
-        obtenerTutores();
     }, [idUsuario]);
 
     const convertirHora24a12 = (hora24) => {
@@ -77,6 +65,14 @@ const HistorialUsuario = () => {
         return `${String(hora12).padStart(2, '0')}:${minutos} ${periodo}`;
     };
 
+    // Función para manejar el clic en el código de la cita
+    const handleCitaClick = (cita) => {
+        if (cita.estado === 'Finalizada' || cita.estado === 'Cancelada') {
+            setSelectedCita(cita); // Establece la cita seleccionada
+            setShowModal(true); // Muestra el modal
+        }
+    };
+
     return (
         <div>
             <Navbar user={user} />
@@ -85,9 +81,9 @@ const HistorialUsuario = () => {
                     <h2>Historial de Citas</h2>
 
                     {loading ? (
-                            <p>Cargando historial del usuario...</p>
-                        ) : (
-                            <table className={styles.userTable}>
+                        <p>Cargando historial del usuario...</p>
+                    ) : (
+                        <table className={styles.userTable}>
                             <thead>
                                 <tr>
                                     <th>Codigo Cita</th>
@@ -96,17 +92,41 @@ const HistorialUsuario = () => {
                                     <th>Encargado</th>
                                     <th>Fecha</th>
                                     <th>Hora</th>
+                                    <th>Estado</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {usuarioCitas.map((usuarioCita) => (
                                     <tr key={usuarioCita?.id}>
-                                        <td>{usuarioCita?.codigo}</td>
+                                        <td>
+                                            {/* Hacer clic en el código solo si el estado es "finalizada" o "cancelada" */}
+                                            {(usuarioCita.estado === 'Finalizada' || usuarioCita.estado === 'Cancelada') ? (
+                                                <span
+                                                    className={styles.clickableCode}
+                                                    onClick={() => handleCitaClick(usuarioCita)}
+                                                >
+                                                    {usuarioCita?.codigo}
+                                                </span>
+                                            ) : (
+                                                <span style={{cursor: "not-allowed" }} title="La cita no está cancelada o finalizada, por esto no se puede mostrar las observaciones finales.">{usuarioCita?.codigo}</span>
+                                            )}
+                                        </td>
                                         <td>{usuarioCita?.usuario.nombre}</td>
                                         <td>{usuarioCita?.usuario.celular}</td>
                                         <td>{usuarioCita?.tutores.nombre_completo}</td>
                                         <td>{usuarioCita?.fecha}</td>
-                                        <td>{usuarioCita?.hora ? convertirHora24a12(usuarioCita.hora) : ''}</td>
+                                        <td>
+                                            {usuarioCita?.hora === "00:00:00"
+                                                ? "Cita cancelada"
+                                                : usuarioCita?.hora
+                                                    ? convertirHora24a12(usuarioCita.hora)
+                                                    : ''}
+                                        </td>
+                                        <td>
+                                            {usuarioCita.estado === 'Pendiente' && '⏳ Pendiente'}
+                                            {usuarioCita.estado === 'Cancelada' && '❌ Cancelada'}
+                                            {usuarioCita.estado === 'Finalizada' && '✅ Finalizada'}
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -114,6 +134,14 @@ const HistorialUsuario = () => {
                     )}
                 </div>
             </div>
+
+            {/* Mostrar el modal si showModal es true */}
+            {showModal && (
+                <CitaModal
+                    cita={selectedCita}
+                    onClose={() => setShowModal(false)}
+                />
+            )}
         </div>
     );
 };

@@ -138,3 +138,23 @@ input:focus, select:focus, .react-datepicker-wrapper:focus-within {
 .detalleButtons.back:hover {
     background-color: #ec7b4a; /* verde más oscuro */
 }
+
+/* Estilos para desarrollo de cita */
+.desarrollar {
+    background-color: #4CAF50; /* Verde */
+    color: white;
+}
+
+.guardar {
+    background-color: #2196F3; /* Azul */
+    color: white;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+}

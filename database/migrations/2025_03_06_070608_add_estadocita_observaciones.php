@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void {
         Schema::table('citas', function (Blueprint $table) {
-            $table->enum('estado', ['pendiente', 'confirmada', 'en proceso', 'cancelada', 'finalizada'])->default('pendiente');
-            $table->text('observaciones')->nullable();
+            $table->enum('estado', ['pendiente', 'confirmada', 'en proceso', 'cancelada', 'finalizada'])->default('pendiente')->after('hora');
+            $table->text('observaciones')->nullable()->after('hora');
         });
     }
 

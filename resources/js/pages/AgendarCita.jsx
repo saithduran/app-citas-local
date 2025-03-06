@@ -106,7 +106,11 @@ function AgendarCita() {
 
     const obtenerHorariosDisponibles = async (fecha) => {
         try {
-            const response = await axios.get(`http://localhost:8000/api/horarios-disponibles/${fecha}`);
+            const response = await axios.get(`http://localhost:8000/api/horariosDisponibles/${fecha}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
             if (Array.isArray(response.data)) {
                 if (response.data.length > 0) {
                     const horarios12h = response.data.map(convertirHora24a12);
@@ -170,7 +174,8 @@ function AgendarCita() {
                 }
             });
             const codigoCita = response.data.codigo;
-            setMensajeExito(`✅ Cita creada con éxito. Tu código es: ${codigoCita}. Guardalo para consultar tu cita si quieres cancelarla o modificarla después.`);
+            // setMensajeExito(`✅ Cita creada con éxito. Tu código es: ${codigoCita}. Guardalo para consultar tu cita si quieres cancelarla o modificarla después.`);
+            setMensajeExito(`✅ Cita creada con éxito.`);
             const fechaFormateada = selectedDate.toISOString().split('T')[0];
             await obtenerHorariosDisponibles(fechaFormateada);
         } catch (error) {

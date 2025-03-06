@@ -19,7 +19,6 @@ function Calendario() {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
                 });
-                console.log(response)
                 const citas = response.data.map(cita => {
                     const fecha = cita.start || '';
                     let hora = cita.hora || '';
