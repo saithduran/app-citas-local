@@ -72,10 +72,6 @@ const RegistroUsuarios = () => {
                 }
             });
             setMensajeExito(`✅ Usuario creado con éxito.`);
-            setTimeout(() => {
-                setMensajeExito("");
-                navigate("/");
-            }, 30000);
         } catch (error) {
             console.error('Error al registrar el usuario:', error);
             setError('Hubo un error al registrar usuario. Por favor, intenta nuevamente.');

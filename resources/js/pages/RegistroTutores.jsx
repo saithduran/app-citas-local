@@ -71,10 +71,6 @@ const RegistroUsuarios = () => {
                 }
             });
             setMensajeExito(`✅ Encargado creado con éxito.`);
-            setTimeout(() => {
-                setMensajeExito("");
-                navigate("/");
-            }, 30000);
         } catch (error) {
             console.error('Error al registrar el encargado:', error);
             setError('Hubo un error al registrar encargado. Por favor, intenta nuevamente.');
