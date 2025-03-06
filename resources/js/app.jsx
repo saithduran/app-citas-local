@@ -15,8 +15,6 @@ import HistorialUsuario from './pages/HistorialUsuario';
 // import '../css/app.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-
-
 const PrivateRoute = ({ children }) => {
     const token = localStorage.getItem('token');
     return token ? children : <Navigate to="/login" />;

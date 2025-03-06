@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::create('citas', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->date('fecha');
-        //     $table->time('hora');
-        //     $table->string('nombre');
-        //     $table->string('celular');
-        //     $table->timestamps();
-        // });
+        Schema::create('citas', function (Blueprint $table) {
+            $table->id();
+            $table->date('fecha');
+            $table->time('hora');
+            $table->string('nombre');
+            $table->string('celular');
+            $table->timestamps();
+        });
     }
 
     /**
