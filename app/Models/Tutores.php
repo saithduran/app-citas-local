@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Tutores extends Model {
     use HasFactory;
 
-    protected $fillable = ['nombre_completo', 'telefono'];
+    protected $fillable = ['nombre', 'celular', 'estado_ministro'];
 
     public function tutores() {
         return $this->hasMany(Cita::class, 'tutor_id');

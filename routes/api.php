@@ -23,19 +23,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/cita/{codigo}', [CitaController::class, 'update']);
     Route::delete('/cita/{codigo}', [CitaController::class, 'destroy']);
     Route::get('/citas', [CitaController::class, 'index']);
-    Route::get('/usuariocitas/{id}', [CitaController::class, 'usuarioCitas']);
+    Route::get('/miembroCitas/{id}', [CitaController::class, 'usuarioCitas']);
     //Usuarios
-    Route::post('/registrarusuarios', [UsuarioController::class, 'store']);
-    Route::get('/usuarios', [UsuarioController::class, 'index']);
-    Route::get('/usuario/{id}', [UsuarioController::class, 'datos']);
-    Route::put('/usuario/{id}', [UsuarioController::class, 'update']);
-    Route::delete('/usuario/{id}', [UsuarioController::class, 'destroy']);
+    Route::post('/registrarMiembro', [UsuarioController::class, 'store']);
+    Route::get('/miembros', [UsuarioController::class, 'index']);
+    Route::get('/miembro/{id}', [UsuarioController::class, 'datos']);
+    Route::put('/miembro/{id}', [UsuarioController::class, 'update']);
+    Route::delete('/miembro/{id}', [UsuarioController::class, 'destroy']);
     //Tutores
-    Route::post('/registrartutor', [TutorController::class, 'store']);
-    Route::get('/tutores', [TutorController::class, 'index']);
-    Route::get('/tutor/{id}', [TutorController::class, 'datos']);
-    // Route::put('/tutor/{id}', [TutorController::class, 'update']);
-    Route::delete('/tutor/{id}', [TutorController::class, 'destroy']);
+    Route::post('/registrarMinistro', [TutorController::class, 'store']);
+    Route::get('/ministros', [TutorController::class, 'index']);
+    Route::get('/ministro/{id}', [TutorController::class, 'datos']);
+    Route::put('/ministro/{id}', [TutorController::class, 'update']);
+    Route::delete('/ministro/{id}', [TutorController::class, 'destroy']);
     //Rutas para agendamieto de citas
     Route::post('/agendarcitas', [CitaController::class, 'store']);
     Route::get('/horariosDisponibles/{fecha}', [CitaController::class, 'getHorariosDisponibles']);

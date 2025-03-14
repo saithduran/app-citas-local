@@ -31,7 +31,7 @@
     padding: 2rem;
     text-align: center;
     width: 100%;
-    max-width: 60rem;
+    max-width: 85rem;
 }
 
 /* Estilos para la tabla */
@@ -161,4 +161,35 @@
 
 .clickableCode:hover {
     color: darkblue;
+}
+
+
+.searchUsers {
+    width: 300px; /* Ancho del input (ajusta según necesites) */
+    padding: 0.5rem; /* Espaciado interno */
+    border: 1px solid #ccc; /* Borde del input */
+    border-radius: 4px; /* Bordes redondeados */
+    font-size: 1rem; /* Tamaño de la fuente */
+}
+
+
+.cumpleaniosContainer {
+    background: #fff3cd;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+
+.cumpleaniosContainer h3 {
+    margin-bottom: 5px;
+}
+
+.cumpleaniosContainer ul {
+    list-style: none;
+    padding: 0;
+}
+
+.cumpleaniosContainer li {
+    font-weight: bold;
+    color: #d39e00;
 }

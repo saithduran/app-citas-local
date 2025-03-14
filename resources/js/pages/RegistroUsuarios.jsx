@@ -8,9 +8,13 @@ import styles from '../../css/registrousuarios.module.css';
 const RegistroUsuarios = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
+    const [cedula, setCedula] = useState('');
     const [nombre, setNombre] = useState('');
     const [celular, setCelular] = useState('');
+    const [fechaNacimiento, setfechaNacimiento] = useState('');
     const [direccion, setDireccion] = useState('');
+    const [peticion, setPeticion] = useState('');
+    const [fechaIngreso, setfechaIngreso] = useState('');
     const [mensajeExito, setMensajeExito] = useState("");
     const [error, setError] = useState('');
     const [errorCelular, setErrorCelular] = useState('');
@@ -20,7 +24,7 @@ const RegistroUsuarios = () => {
         const regex = /^\d{10}$/;
         return regex.test(numero);
     };
-
+    
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -47,7 +51,7 @@ const RegistroUsuarios = () => {
         setError('');
         setErrorCelular('');
 
-        if (!nombre || !celular || !direccion) {
+        if (!cedula || !nombre || !celular || !direccion || !fechaNacimiento || !peticion || !fechaIngreso) {
             setError('Por favor, completa todos los campos.');
             return;
         }
@@ -60,13 +64,17 @@ const RegistroUsuarios = () => {
         setEnviando(true);
 
         const datos = {
+            cedula: cedula,
             nombre: nombre,
             celular: celular,
-            direccion: direccion
+            fecha_nacimiento: fechaNacimiento,
+            direccion: direccion,
+            peticion: peticion,
+            fecha_ingreso: fechaIngreso
         };
 
         try {
-            const response = await axios.post('http://localhost:8000/api/registrarusuarios', datos, {
+            const response = await axios.post('http://localhost:8000/api/registrarMiembro', datos, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
@@ -91,12 +99,24 @@ const RegistroUsuarios = () => {
                 {errorCelular && <p className={styles.errorMessage}>{errorCelular}</p>}
                 <form onSubmit={handleSubmit}>
                     <div className={styles.formGroup}>
+                        <label>Cedula:</label>
+                        <input
+                            type="number"
+                            value={cedula}
+                            maxLength={10}
+                            onChange={(e) => setCedula(e.target.value)}
+                            placeholder="Ingresa la cedula"
+                            required
+                            className={styles.inputField}
+                        />
+                    </div>
+                    <div className={styles.formGroup}>
                         <label>Nombre:</label>
                         <input
                             type="text"
                             value={nombre}
                             onChange={(e) => setNombre(e.target.value)}
-                            placeholder="Ingresa tu nombre"
+                            placeholder="Ingresa el nombre"
                             required
                             className={styles.inputField}
                         />
@@ -122,6 +142,17 @@ const RegistroUsuarios = () => {
                         />
                     </div>
                     <div className={styles.formGroup}>
+                        <label>Fecha de nacimmiento:</label>
+                        <input
+                            type="date"
+                            value={fechaNacimiento}
+                            onChange={(e) => setfechaNacimiento(e.target.value)}
+                            placeholder="Ingresa la fecha de nacimiento"
+                            required
+                            className={styles.inputField}
+                        />
+                    </div>
+                    <div className={styles.formGroup}>
                         <label>Dirección:</label>
                         <input
                             type="text"
@@ -132,12 +163,34 @@ const RegistroUsuarios = () => {
                             className={styles.inputField}
                         />
                     </div>
+                    <div className={styles.formGroup}>
+                        <label>Petición:</label>
+                        <input
+                            type="text"
+                            value={peticion}
+                            onChange={(e) => setPeticion(e.target.value)}
+                            placeholder="Ingresa la Petición"
+                            required
+                            className={styles.inputField}
+                        />
+                    </div>
+                    <div className={styles.formGroup}>
+                        <label>Fecha de ingreso:</label>
+                        <input
+                            type="date"
+                            value={fechaIngreso}
+                            onChange={(e) => setfechaIngreso(e.target.value)}
+                            placeholder="Ingresa la fecha de nacimiento"
+                            required
+                            className={styles.inputField}
+                        />
+                    </div>
                     <div className={styles.buttonGroup}>
                         <button type="submit" className={`${styles.agendarButtons} ${styles.confirm}`} disabled={enviando}>
                             {enviando ? "Agendando..." : "Confirmar Cita"}
                         </button>
-                        <Link to="/dashboard">
-                            <button className={`${styles.agendarButtons} ${styles.back}`}>Volver al Inicio</button>
+                        <Link to="/listadoMiembros">
+                            <button className={`${styles.agendarButtons} ${styles.back}`}>Volver al Listado</button>
                         </Link>
                     </div>
                 </form>

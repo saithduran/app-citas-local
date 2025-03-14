@@ -17,13 +17,13 @@ function DetalleCita() {
     const [observaciones, setObservaciones] = useState(''); // Nuevo estado
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedTime, setSelectedTime] = useState('');
-    const [selectedUsuario, setSelectedUsuario] = useState(null);
-    const [usuarios, setUsuarios] = useState([]);
+    const [selectedMiembro, setselectedMiembro] = useState(null);
+    const [miembros, setMiembros] = useState([]);
     const [idUsuario, setIdUsuario] = useState('');
     const [celular, setCelular] = useState('');
-    const [selectedTutor, setSelectedTutor] = useState(null);
-    const [idTutor, setIdTutor] = useState('');
-    const [tutores, setTutores] = useState([]);
+    const [selectedMinistro, setselectedMinistro] = useState(null);
+    const [idMinistro, setIdMinistro] = useState('');
+    const [ministros, setMinistros] = useState([]);
     const [horariosDisponibles, setHorariosDisponibles] = useState([]);
     const [mensajeExito, setMensajeExito] = useState("");
     const [error, setError] = useState('');
@@ -49,35 +49,35 @@ function DetalleCita() {
         };
         fetchUser();
 
-        const obtenerUsuarios = async () => {
+        const obtenerMiembros = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/usuarios', {
+                const response = await axios.get('http://localhost:8000/api/miembros', {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
                 });
-                setUsuarios(response.data);
+                setMiembros(response.data);
             } catch (error) {
                 setError("Error al obtener usuarios.");
                 console.error("Error:", error);
             }
         };
-        obtenerUsuarios();
+        obtenerMiembros();
 
-        const obtenerTutores = async () => {
+        const obtenerMinistros = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/tutores', {
+                const response = await axios.get('http://localhost:8000/api/ministros', {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
                 });
-                setTutores(response.data);
+                setMinistros(response.data);
             } catch (error) {
-                setError("Error al obtener usuarios.");
+                setError("Error al obtener ministros.");
                 console.error("Error:", error);
             }
         };
-        obtenerTutores();
+        obtenerMinistros();
     }, [navigate]);
 
     // Obtener detalles de la cita
@@ -94,14 +94,14 @@ function DetalleCita() {
                 setSelectedTime(convertirHora24a12(response.data.hora));
 
                 if (response.data.tutores) {
-                    setSelectedTutor({
-                        label: response.data.tutores.nombre_completo,
+                    setselectedMinistro({
+                        label: response.data.tutores.nombre,
                         value: response.data.tutores.id
                     });
                 }
 
                 if (response.data.usuario) {
-                    setSelectedUsuario({
+                    setselectedMiembro({
                         label: response.data.usuario.nombre,
                         celular: response.data.usuario.celular,
                         value: response.data.usuario.id
@@ -154,21 +154,21 @@ function DetalleCita() {
         return `${String(hora24).padStart(2, '0')}:${minutos}`;
     };
 
-    const handleSeleccionUsuario = (selectedOption) => {
-        setSelectedUsuario(selectedOption);
+    const handleseleccionMiembro = (selectedOption) => {
+        setselectedMiembro(selectedOption);
         setCelular(selectedOption.celular);
         setIdUsuario(selectedOption.value);
     };
 
-    const handleSeleccionTutor = (selectedOption) => {
-        setSelectedTutor(selectedOption);
-        setIdTutor(selectedOption.value);
+    const handleseleccionMinistro = (selectedOption) => {
+        setselectedMinistro(selectedOption);
+        setIdMinistro(selectedOption.value);
     };
 
     const handleEdit = async () => {
         const datos = {
-            usuario_id: selectedUsuario.value,
-            tutor_id: selectedTutor.value,
+            usuario_id: selectedMiembro.value,
+            tutor_id: selectedMinistro.value,
             fecha: selectedDate.toISOString().split('T')[0],
             hora: convertirHora12a24(selectedTime),
         };
@@ -184,8 +184,8 @@ function DetalleCita() {
 
             setCita({
                 ...cita,
-                usuario_id: selectedUsuario.value,
-                tutor_id: selectedTutor.value,
+                usuario_id: selectedMiembro.value,
+                tutor_id: selectedMinistro.value,
                 fecha: selectedDate.toISOString().split('T')[0],
                 hora: convertirHora12a24(selectedTime),
             });
@@ -265,28 +265,27 @@ function DetalleCita() {
                         <div>
                             <label className='mt-3'>Nombre:</label>
                             <Select
-                                options={usuarios.map(user => ({ 
-                                    label: user.nombre, 
-                                    celular: user.celular, 
-                                    value: user.id 
+                                options={miembros.map(miembro => ({ 
+                                    label: miembro.nombre, 
+                                    value: miembro.id 
                                 }))}
-                                onChange={handleSeleccionUsuario}
+                                onChange={handleseleccionMiembro}
                                 placeholder="Ingresa o selecciona un nombre"
                                 className="input-field"
-                                value={selectedUsuario}
+                                value={selectedMiembro}
                             />
-                            <label className='mt-3'>Celular:</label>
-                            <input type="tel" value={celular} onChange={(e) => setCelular(e.target.value)} className="input-field" maxLength={10} disabled/>
+                            {/* <label className='mt-3'>Celular:</label>
+                            <input type="tel" value={celular} onChange={(e) => setCelular(e.target.value)} className="input-field" maxLength={10} disabled/> */}
                             <label className='mt-3'>Encargado:</label>
                             <Select
-                                options={tutores.map(tutor => ({
-                                    label: tutor.nombre_completo,
-                                    value: tutor.id
+                                options={ministros.map(ministro => ({
+                                    label: ministro.nombre,
+                                    value: ministro.id
                                 }))}
-                                onChange={handleSeleccionTutor}
+                                onChange={handleseleccionMinistro}
                                 placeholder="Ingresa o selecciona un nombre"
                                 className="input-field"
-                                value={selectedTutor}
+                                value={selectedMinistro}
                             />
                             <label className='mt-3'>Fecha:</label>
                             <DatePicker selected={selectedDate} onChange={setSelectedDate} dateFormat="dd/MM/yyyy" minDate={new Date()} locale={es} className="input-field"/>
@@ -304,7 +303,7 @@ function DetalleCita() {
                         <div>
                             <p><strong>Nombre:</strong> {cita?.usuario.nombre}</p>
                             <p><strong>Celular:</strong> {cita?.usuario.celular}</p>
-                            <p><strong>Encargado:</strong> {cita?.tutores.nombre_completo}</p>
+                            <p><strong>Ministro:</strong> {cita?.tutores.nombre}</p>
                             <p><strong>Fecha:</strong> {cita?.fecha}</p>
                             <p><strong>Hora:</strong> {cita?.hora ? convertirHora24a12(cita.hora) : ''}</p>
                             <p><strong>Estado:</strong> {cita?.estado}</p>

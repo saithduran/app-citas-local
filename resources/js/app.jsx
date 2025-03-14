@@ -30,10 +30,10 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
                 <Route path="/cita/:codigo" element={<PrivateRoute><DetalleCita /></PrivateRoute>} />
-                <Route path="/registrousuarios" element={<PrivateRoute><RegistroUsuarios /></PrivateRoute>} />
-                <Route path="/registrotutores" element={<PrivateRoute><RegistroTutores /></PrivateRoute>} />
-                <Route path="/listadousuarios" element={<PrivateRoute><ListadoUsuarios /></PrivateRoute>} />
-                <Route path="/listadotutores" element={<PrivateRoute><ListadoTutores /></PrivateRoute>} />
+                <Route path="/registroMiembro" element={<PrivateRoute><RegistroUsuarios /></PrivateRoute>} />
+                <Route path="/listadoMiembros" element={<PrivateRoute><ListadoUsuarios /></PrivateRoute>} />
+                <Route path="/registroMinistro" element={<PrivateRoute><RegistroTutores /></PrivateRoute>} />
+                <Route path="/listadoMinistros" element={<PrivateRoute><ListadoTutores /></PrivateRoute>} />
                 <Route path="/historial/:idUsuario" element={<PrivateRoute><HistorialUsuario /></PrivateRoute>} />
             </Routes>
         </Router>

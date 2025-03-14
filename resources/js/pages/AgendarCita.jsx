@@ -13,12 +13,12 @@ function AgendarCita() {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedTime, setSelectedTime] = useState('');
     const [nombre, setNombre] = useState('');
-    const [celular, setCelular] = useState('');
+    // const [celular, setCelular] = useState('');
     const [idUsuario, setIdUsuario] = useState('');
-    const [usuarios, setUsuarios] = useState([]);
+    const [miembros, setMiembros] = useState([]);
     const [nombreTutor, setNombreTutor] = useState('');
     const [idTutor, setIdTutor] = useState('');
-    const [tutores, setTutores] = useState([]);
+    const [ministros, setMinistros] = useState([]);
     const [horariosDisponibles, setHorariosDisponibles] = useState([]);
     const [mensajeExito, setMensajeExito] = useState("");
     const [error, setError] = useState('');
@@ -47,33 +47,33 @@ function AgendarCita() {
 
         const obtenerUsuarios = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/usuarios', {
+                const response = await axios.get('http://localhost:8000/api/miembros', {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
                 });
-                setUsuarios(response.data);
+                setMiembros(response.data);
             } catch (error) {
-                setError("Error al obtener usuarios.");
+                setError("Error al obtener miembros.");
                 console.error("Error:", error);
             }
         };
         obtenerUsuarios();
 
-        const obtenerTutores = async () => {
+        const obtenerMinistros = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/tutores', {
+                const response = await axios.get('http://localhost:8000/api/ministros', {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
                 });
-                setTutores(response.data);
+                setMinistros(response.data);
             } catch (error) {
                 setError("Error al obtener usuarios.");
                 console.error("Error:", error);
             }
         };
-        obtenerTutores();
+        obtenerMinistros();
 
         const fechaFormateada = selectedDate.toISOString().split('T')[0];
         obtenerHorariosDisponibles(fechaFormateada);
@@ -129,7 +129,7 @@ function AgendarCita() {
 
     const handleSeleccionUsuario = (selectedOption) => {
         setNombre(selectedOption.label);
-        setCelular(selectedOption.value);
+        // setCelular(selectedOption.value);
         setIdUsuario(selectedOption.idUsuario);
     };
 
@@ -138,25 +138,16 @@ function AgendarCita() {
         setIdTutor(selectedOption.idTutor);
     };
 
-    const validarCelular = (numero) => {
-        const regex = /^\d{10}$/;
-        return regex.test(numero);
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        setErrorCelular('');
+        // setErrorCelular('');
 
-        if (!nombre || !celular || !selectedTime) {
+        if (!nombre || !selectedTime) {
             setError('Por favor, completa todos los campos.');
             return;
         }
 
-        if (!validarCelular(celular)) {
-            setErrorCelular('Por favor, ingresa un número de celular válido (10 dígitos).');
-            return;
-        }
 
         setEnviando(true);
 
@@ -227,16 +218,17 @@ function AgendarCita() {
 
                         <input value={idUsuario} disabled type='hidden' />
                         <div className={styles.formGroup}>
-                            <label>Nombre:</label>
+                            <label>Miembro:</label>
                             <Select
-                                options={usuarios.map(user => ({ label: user.nombre, value: user.celular, idUsuario: user.id }))}
+                                // options={usuarios.map(user => ({ label: user.nombre, value: user.celular, idUsuario: user.id }))}
+                                options={miembros.map(miembro => ({ label: miembro.nombre, idUsuario: miembro.id }))}
                                 onChange={handleSeleccionUsuario}
                                 placeholder="Ingresa o selecciona un nombre"
                                 className="input-field"
                             />
                         </div>
 
-                        <div className={styles.formGroup}>
+                        {/* <div className={styles.formGroup}>
                             <label>Número de celular:</label>
                             <input
                                 type="tel"
@@ -256,13 +248,13 @@ function AgendarCita() {
                                 className="input-field"
                             />
                             {errorCelular && <p className={styles.errorMessage}>{errorCelular}</p>}
-                        </div>
+                        </div> */}
 
                         <input value={idTutor} disabled type='hidden' />
                         <div className={styles.formGroup}>
-                            <label>Encargado:</label>
+                            <label>Ministro:</label>
                             <Select
-                                options={tutores.map(tutor => ({ label: tutor.nombre_completo, idTutor: tutor.id }))}
+                                options={ministros.map(ministro => ({ label: ministro.nombre, idTutor: ministro.id }))}
                                 onChange={handleSeleccionTutor}
                                 placeholder="Ingresa o selecciona un nombre"
                                 className="input-field"

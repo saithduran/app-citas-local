@@ -37,7 +37,7 @@ const HistorialUsuario = () => {
 
         const fetchCitasUsuario = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/api/usuariocitas/${idUsuario}`, {
+                const response = await axios.get(`http://localhost:8000/api/miembroCitas/${idUsuario}`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
@@ -89,7 +89,7 @@ const HistorialUsuario = () => {
                                     <th>Codigo Cita</th>
                                     <th>Nombre</th>
                                     <th>Celular</th>
-                                    <th>Encargado</th>
+                                    <th>Ministro</th>
                                     <th>Fecha</th>
                                     <th>Hora</th>
                                     <th>Estado</th>
@@ -113,7 +113,7 @@ const HistorialUsuario = () => {
                                         </td>
                                         <td>{usuarioCita?.usuario.nombre}</td>
                                         <td>{usuarioCita?.usuario.celular}</td>
-                                        <td>{usuarioCita?.tutores.nombre_completo}</td>
+                                        <td>{usuarioCita?.tutores.nombre}</td>
                                         <td>{usuarioCita?.fecha}</td>
                                         <td>
                                             {usuarioCita?.hora === "00:00:00"

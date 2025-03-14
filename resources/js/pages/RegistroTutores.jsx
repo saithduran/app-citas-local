@@ -8,17 +8,16 @@ import styles from '../../css/registrousuarios.module.css';
 const RegistroUsuarios = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
-    const [nombreCompleto, setNombreCompleto] = useState('');
-    const [telefono, setTelefono] = useState('');
-    const [direccion, setDireccion] = useState('');
+    const [nombre, setNombre] = useState('');
+    const [celular, setCelular] = useState('');
     const [mensajeExito, setMensajeExito] = useState("");
     const [error, setError] = useState('');
     const [errorCelular, setErrorCelular] = useState('');
     const [enviando, setEnviando] = useState(false);
 
-    const validarCelular = (telefono) => {
+    const validarCelular = (celular) => {
         const regex = /^\d{10}$/;
-        return regex.test(telefono);
+        return regex.test(celular);
     };
 
     useEffect(() => {
@@ -31,7 +30,7 @@ const RegistroUsuarios = () => {
                 });
                 setUser(response.data);
             } catch (error) {
-                console.error('Error al obtener el usuario', error);
+                console.error('Error al obtener el ministro', error);
                 if (error.response && error.response.status === 401) {
                     localStorage.removeItem('token');
                     navigate('/login');
@@ -47,12 +46,12 @@ const RegistroUsuarios = () => {
         setError('');
         setErrorCelular('');
 
-        if (!nombreCompleto || !telefono) {
+        if (!nombre || !celular) {
             setError('Por favor, completa todos los campos.');
             return;
         }
 
-        if (!validarCelular(telefono)) {
+        if (!validarCelular(celular)) {
             setErrorCelular('Por favor, ingresa un número de celular válido (10 dígitos).');
             return;
         }
@@ -60,20 +59,20 @@ const RegistroUsuarios = () => {
         setEnviando(true);
 
         const datos = {
-            nombre_completo: nombreCompleto,
-            telefono: telefono,
+            nombre,
+            celular,
         };
         console.log(datos);
         try {
-            const response = await axios.post('http://localhost:8000/api/registrartutor', datos, {
+            const response = await axios.post('http://localhost:8000/api/registrarMinistro', datos, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            setMensajeExito(`✅ Encargado creado con éxito.`);
+            setMensajeExito(`✅ Ministro creado con éxito.`);
         } catch (error) {
-            console.error('Error al registrar el encargado:', error);
-            setError('Hubo un error al registrar encargado. Por favor, intenta nuevamente.');
+            console.error('Error al registrar el ministro:', error);
+            setError('Hubo un error al registrar ministro. Por favor, intenta nuevamente.');
         } finally {
             setEnviando(false);
         }
@@ -84,7 +83,7 @@ const RegistroUsuarios = () => {
         <Navbar user={user} />
         <div className={styles.agendarContainer}>
             <div className={styles.agendarCard}>
-                <h2 className={styles.tituloAgendar}>Registro de Encargado</h2>
+                <h2 className={styles.tituloAgendar}>Registro de Ministro</h2>
                 {mensajeExito && <div className={styles.alertaExito}>{mensajeExito}</div>}
                 {error && <p className={styles.errorMessage}>{error}</p>}
                 {errorCelular && <p className={styles.errorMessage}>{errorCelular}</p>}
@@ -93,8 +92,8 @@ const RegistroUsuarios = () => {
                         <label>Nombre:</label>
                         <input
                             type="text"
-                            value={nombreCompleto}
-                            onChange={(e) => setNombreCompleto(e.target.value)}
+                            value={nombre}
+                            onChange={(e) => setNombre(e.target.value)}
                             placeholder="Ingresa tu nombre"
                             required
                             className={styles.inputField}
@@ -104,11 +103,11 @@ const RegistroUsuarios = () => {
                         <label>Número de celular:</label>
                         <input
                             type="tel"
-                            value={telefono}
+                            value={celular}
                             onChange={(e) => {
                                 const input = e.target.value;
                                 if (/^\d{0,10}$/.test(input)) {
-                                    setTelefono(input);
+                                    setCelular(input);
                                     setErrorCelular('');
                                 } else {
                                     setErrorCelular('Solo se permiten números y un máximo de 10 dígitos.');
@@ -124,8 +123,8 @@ const RegistroUsuarios = () => {
                         <button type="submit" className={`${styles.agendarButtons} ${styles.confirm}`} disabled={enviando}>
                             {enviando ? "Agendando..." : "Confirmar Cita"}
                         </button>
-                        <Link to="/dashboard">
-                            <button className={`${styles.agendarButtons} ${styles.back}`}>Volver al Inicio</button>
+                        <Link to="/listadoMinistros">
+                            <button className={`${styles.agendarButtons} ${styles.back}`}>Volver al Listado</button>
                         </Link>
                     </div>
                 </form>

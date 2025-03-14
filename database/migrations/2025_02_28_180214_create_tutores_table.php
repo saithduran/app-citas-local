@@ -9,7 +9,7 @@ return new class extends Migration {
         Schema::create('tutores', function (Blueprint $table) {
             $table->id();
             $table->string('nombre_completo');
-            $table->string('telefono');
+            $table->string('celular');
             $table->timestamps();
         });
 

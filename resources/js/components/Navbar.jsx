@@ -46,13 +46,13 @@ function Navbar({ user }) {
                             className="navbar-item dropdown-toggle"
                             onClick={() => setIsDropdownOpenUsuarios(!isDropdownOpenUsuarios)}
                         >
-                            Usuarios
+                            Miembros
                         </button>
 
                         {/* Menú desplegable */}
                         <div className={`dropdown-menu ${isDropdownOpenUsuarios ? 'active' : ''}`}>
-                            <Link to="/registrousuarios" className="dropdown-item">Registro de Usuario</Link>
-                            <Link to="/listadousuarios" className="dropdown-item">Listado de Usuarios</Link>
+                            <Link to="/registroMiembro" className="dropdown-item">Registro de Miembro</Link>
+                            <Link to="/listadoMiembros" className="dropdown-item">Listado de Miembros</Link>
                         </div>
                     </div>
                     {/* Dropdown para el usuario */}
@@ -61,13 +61,13 @@ function Navbar({ user }) {
                             className="navbar-item dropdown-toggle"
                             onClick={() => setIsDropdownOpenEncargados(!isDropdownOpenEncargados)}
                         >
-                            Encargado
+                            Ministros
                         </button>
 
                         {/* Menú desplegable */}
                         <div className={`dropdown-menu ${isDropdownOpenEncargados ? 'active' : ''}`}>
-                            <Link to="/registrotutores" className="dropdown-item">Registro de Encargado</Link>
-                            <Link to="/listadotutores" className="dropdown-item">Listado de Encargados</Link>
+                            <Link to="/registroMinistro" className="dropdown-item">Registro de Ministro</Link>
+                            <Link to="/listadoMinistros" className="dropdown-item">Listado de Ministros</Link>
                         </div>
                     </div>
                     <button className="navbar-item logout" onClick={handleLogout}>Cerrar Sesión</button>
