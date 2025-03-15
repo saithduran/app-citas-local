@@ -13,6 +13,12 @@ class AuthController extends Controller
         return response()->json($request->user());
     }
 
+    
+    public function store(){
+        $tutores = Auth::user();
+    
+        return response()->json($tutores);
+    }
 
     public function login(Request $request)
     {

@@ -8,7 +8,7 @@ return new class extends Migration {
     public function up() {
         Schema::create('tutores', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre_completo');
+            $table->string('nombre');
             $table->string('celular');
             $table->timestamps();
         });

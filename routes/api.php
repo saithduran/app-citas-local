@@ -4,7 +4,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CitaController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\WhatsAppController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\TutorController;
 
@@ -12,7 +11,7 @@ use App\Http\Controllers\TutorController;
 //Ruta para enviar mensajes por whatsapp
 // Route::get('/whatsapp/prueba', [WhatsAppController::class, 'enviarMensajePrueba']);
 Route::post('/login', [AuthController::class, 'login']);
-
+Route::get('/test-db', [AuthController::class, 'store']);
 Route::middleware('auth:sanctum')->group(function () {
     // Ruta para loger  y autenticación de usuario
     Route::post('/logout', [AuthController::class, 'logout']);

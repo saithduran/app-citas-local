@@ -5,17 +5,17 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up()
-    {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('username')->unique()->after('name'); // Agregar campo de usuario único
-        });
-    }
+    // public function up()
+    // {
+    //     Schema::table('users', function (Blueprint $table) {
+    //         $table->string('username')->unique()->after('name'); // Agregar campo de usuario único
+    //     });
+    // }
 
-    public function down()
-    {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('username');
-        });
-    }
+    // public function down()
+    // {
+    //     Schema::table('users', function (Blueprint $table) {
+    //         $table->dropColumn('username');
+    //     });
+    // }
 };
