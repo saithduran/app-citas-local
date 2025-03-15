@@ -1,40 +1,42 @@
-# Usa una imagen oficial de PHP con las extensiones necesarias
-FROM php:8.2-fpm
+# Usa PHP 8.2 con Apache
+FROM php:8.2-apache
 
 # Instala dependencias del sistema
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y \
     unzip \
     curl \
     git \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
-    && docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
-
+    && docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd
 
 # Instala Node.js y npm
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs
 
-# Copia los archivos de Laravel al contenedor
-WORKDIR /var/www
-COPY . .
+# Copiar archivos del proyecto
+COPY . /var/www/html
 
-# Instala dependencias de Laravel
+# Establecer el directorio de trabajo
+WORKDIR /var/www/html
+
+# Instalar dependencias de Laravel
 RUN composer install --no-dev --optimize-autoloader
 
-# Instala dependencias de React y compila el frontend
-WORKDIR /var/www/resources
+# Configurar permisos para Laravel
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache && \
+    chown -R www-data:www-data /var/www/html
+
+# Instalar dependencias de React y compilar frontend con Vite
 RUN npm install && npm run build
 
-# Cambia de nuevo al directorio raíz de Laravel
-WORKDIR /var/www
+# Configurar Apache para servir Laravel desde public/
+RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
+RUN a2enmod rewrite
 
-# Da permisos correctos a storage y bootstrap/cache
-RUN chmod -R 775 storage bootstrap/cache
+# Exponer puerto 80
+EXPOSE 80
 
-# Expone el puerto del servidor
-EXPOSE 9000
-
-CMD ["php-fpm"]
+# Comando de inicio
+CMD ["apache2-foreground"]
