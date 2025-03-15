@@ -12,7 +12,7 @@ function Dashboard() {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await axios.get(API_URL`/api/user`, {
+                const response = await axios.get(`${API_URL}/api/user`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
