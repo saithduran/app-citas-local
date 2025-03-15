@@ -10,9 +10,9 @@ export default defineConfig({
         }),
         react(), // Plugin de React
     ],
-    server: {
-        host: 'localhost',
-        port: 5173, // Puerto en el que se ejecuta Vite
-        strictPort: true, // Asegura que Vite no cambie el puerto
+    build: {
+        outDir: 'public/build', // Carpeta de salida para los assets compilados
+        emptyOutDir: true, // Limpia la carpeta de salida antes de construir
     },
+    base: '/build/', // Ruta base para los assets en producción
 });
