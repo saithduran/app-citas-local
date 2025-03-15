@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import Navbar from '../components/navbar';
+import Navbar from '../components/Navbar';
 import DatePicker from 'react-datepicker';
 import { es } from "date-fns/locale";
 import 'react-datepicker/dist/react-datepicker.css';

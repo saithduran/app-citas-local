@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Navbar from '../components/navbar';
+import Navbar from '../components/Navbar';
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import styles from '../../css/listadousuarios.module.css';

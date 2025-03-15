@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../components/navbar';
+import Navbar from '../components/Navbar';
 import 'react-datepicker/dist/react-datepicker.css'; // Estilos del calendario
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Importa Axios
