@@ -13,6 +13,7 @@ function Login() {
     const [error, setError] = useState('');
 
     
+    const API_URL = "https://app-citas-production.onrender.com";
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -20,10 +21,10 @@ function Login() {
         try {
             // Obtener la cookie CSRF antes de enviar credenciales
             
-            await axios.get('http://localhost:8000/sanctum/csrf-cookie');
+            await axios.get(API_URL`/sanctum/csrf-cookie`);
 
             // Enviar credenciales con withCredentials: true
-            const response = await axios.post('http://localhost:8000/api/login', {
+            const response = await axios.post(API_URL`/api/login`, {
                 username,
                 password
             }, { withCredentials: true });
