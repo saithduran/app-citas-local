@@ -2,14 +2,16 @@
 FROM php:8.2-fpm
 
 # Instala dependencias del sistema
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     unzip \
     curl \
     git \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
-    && docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd
+    && docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 
 # Instala Node.js y npm
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \

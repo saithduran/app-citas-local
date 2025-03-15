@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'mail', // Agregar el campo usuario
         'password',
+        'username'
     ];
 
     /**
