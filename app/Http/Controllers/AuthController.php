@@ -15,7 +15,7 @@ class AuthController extends Controller
 
     
     public function store(){
-        $tutores = Auth::user();
+        $tutores = User::user();
     
         return response()->json($tutores);
     }
