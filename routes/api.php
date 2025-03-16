@@ -12,6 +12,7 @@ use App\Http\Controllers\TutorController;
 // Route::get('/whatsapp/prueba', [WhatsAppController::class, 'enviarMensajePrueba']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/test-db', [AuthController::class, 'store']);
+Route::get('/test-db2', [AuthController::class, 'pruebadb']);
 Route::middleware('auth:sanctum')->group(function () {
     // Ruta para loger  y autenticación de usuario
     Route::post('/logout', [AuthController::class, 'logout']);
