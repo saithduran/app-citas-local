@@ -39,6 +39,11 @@ RUN npm install && npm run build
 RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 RUN a2enmod rewrite
 
+# Optimizar Laravel para producción
+RUN php artisan config:cache
+RUN php artisan route:cache
+RUN php artisan view:cache
+
 # Exponer puerto 80
 EXPOSE 80
 
